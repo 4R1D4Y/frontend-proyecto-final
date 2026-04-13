@@ -5,6 +5,7 @@ const Explore = () => {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSong, setCurrentSong] = useState(null);
+  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
 
   // URL base para las imágenes (definida en tu .env de React)
   const storageUrl = import.meta.env.VITE_STORAGE_URL;
@@ -23,11 +24,11 @@ const Explore = () => {
   fetchSongs();
 }, []);
 
-  if (loading) return <div style={{ padding: '20px' }}>Cargando biblioteca...</div>;
+  if (loading) return <div style={{ padding: '20px' }}>{lang === 'es' ? 'Cargando biblioteca...' : 'Loading songs...'}</div>;
 
   return (
     <div style={{ padding: '20px', paddingBottom: '80px' }}>
-      <h2>Explorar Música</h2>
+      <h2>{lang === 'es' ? 'Explorar Música' : 'Explore Music'}</h2>
       <div style={gridStyle}>
         {songs.map(song => (
           <div key={song.id} style={cardStyle}>
@@ -54,7 +55,7 @@ const Explore = () => {
                 style={playBtnStyle} 
                 onClick={() => setCurrentSong(song)} // <--- Al hacer clic, enviamos la canción al reproductor
                 >
-                ▶ Reproducir
+                ▶ {lang === 'es' ? 'Reproducir' : 'Replay'}
             </button>
           </div>
         ))}

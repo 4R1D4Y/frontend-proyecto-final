@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
+import { footerTranslations } from '../lang/footerTranslations';
 
 const Footer = () => {
+  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+  const t = footerTranslations[lang];
+  
   return (
     <footer style={footerStyle}>
       <div style={containerStyle}>
@@ -16,17 +20,19 @@ const Footer = () => {
         </div>
 
         {/* Sección de Enlaces Legales */}
-        { <div style={legalSectionStyle}>
-          <Link to="/legal" style={legalLinkStyle}>Términos de Uso</Link>
-          <Link to="/legal" style={legalLinkStyle}>Política de Privacidad</Link>
-          <Link to="/cookies" style={legalLinkStyle}>Cookies</Link>
-        </div> }
+        <div style={legalSectionStyle}>
+          <Link to="/legal" style={legalLinkStyle}>{t.licenses}</Link>
+          <Link to="/legal" style={legalLinkStyle}>{t.terms}</Link>
+          <Link to="/legal" style={legalLinkStyle}>{t.policy}</Link>
+          <Link to="/legal" style={legalLinkStyle}>{t.cookies}</Link>
+        </div>
 
         {/* Copyright */}
         <div style={copyStyle}>
-          © {new Date().getFullYear()} Creo Music. Todos los derechos reservados.
+          © {new Date().getFullYear()} Creo Music. {t.reserved}
         </div>
       </div>
+        
     </footer>
   );
 };

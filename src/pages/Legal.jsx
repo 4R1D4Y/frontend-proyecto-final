@@ -1,17 +1,23 @@
+import { legalTranslations } from "../lang/legalTranslations";
+
 const Legal = () => {
+  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+
+  const t = legalTranslations[lang];
+  
   return (
     <div style={containerStyle}>
-      <h1 style={mainTitleStyle}>Información Legal y Licencias</h1>
-      <p style={{ color: '#666', marginBottom: '40px' }}>Última actualización: {new Date().toLocaleDateString()}</p>
+      <h1 style={mainTitleStyle}>{t.title}</h1>
+      <p style={{ color: '#666', marginBottom: '40px' }}>{t.update}: {new Date().toLocaleDateString()}</p>
 
       {/* NUEVA SECCIÓN: Licencias de Uso */}
       <section style={sectionStyle}>
-        <h2 style={subTitleStyle}>1. Licencias de Uso Musical</h2>
-        <p>Toda la música disponible en <strong>Creo Music</strong> está sujeta a las siguientes condiciones de licencia:</p>
+        <h2 style={subTitleStyle}>{t.sec1_title}</h2>
+        <p>{t.sec1_intro}</p>
         <div style={licenseBoxStyle}>
-          <p><strong>Uso Personal:</strong> Puedes escuchar, descargar (si está habilitado) y disfrutar de las pistas de forma gratuita para tu disfrute privado.</p>
-          <p><strong>Creadores de Contenido:</strong> Se permite el uso de las canciones en plataformas como YouTube, Twitch o Instagram siempre que se otorgue el crédito correspondiente al artista (Ej: <em>Música de Creo - [Nombre de la canción]</em>).</p>
-          <p><strong>Uso Comercial:</strong> El uso de estas pistas en publicidad, radio, televisión o películas requiere una licencia comercial específica. Ponte en contacto con nosotros para gestionar estos derechos.</p>
+          <p><strong>{t.sec1_personal_t}</strong> {t.sec1_personal_d}</p>
+          <p><strong>{t.sec1_content_t}</strong> {t.sec1_content_d}</p>
+          <p><strong>{t.sec1_comercial_t}</strong> {t.sec1_comercial_d}</p>
         </div>
       </section>
 
@@ -19,12 +25,12 @@ const Legal = () => {
 
       {/* Sección: Términos de Uso */}
       <section style={sectionStyle}>
-        <h2 style={subTitleStyle}>2. Términos de Servicio</h2>
-        <p>Al acceder a nuestra plataforma, aceptas:</p>
+        <h2 style={subTitleStyle}>{t.sec2_title}</h2>
+        <p>{t.sec2_intro}</p>
         <ul style={listStyle}>
-          <li>No utilizar scripts o bots para inflar artificialmente el número de reproducciones.</li>
-          <li>No reclamar la autoría de ninguna obra alojada en este sitio.</li>
-          <li>Respetar la integridad de los archivos de audio originales.</li>
+          <li>{t.sec2_li1}</li>
+          <li>{t.sec2_li2}</li>
+          <li>{t.sec2_li3}</li>
         </ul>
       </section>
 
@@ -32,13 +38,25 @@ const Legal = () => {
 
       {/* Sección: Política de Privacidad */}
       <section style={sectionStyle}>
-        <h2 style={subTitleStyle}>3. Política de Privacidad</h2>
-        <p>Tus datos se manejan de la siguiente forma:</p>
+        <h2 style={subTitleStyle}>{t.sec3_title}</h2>
+        <p>{t.sec3_intro}</p>
         <ul style={listStyle}>
-          <li><strong>Datos:</strong> Nombre y email para gestionar tu cuenta.</li>
-          <li><strong>Cookies:</strong> Usamos cookies técnicas para mantener tu sesión activa.</li>
+          <li><strong>{t.sec3_li1_t}</strong> {t.sec3_li1_d}</li>
+          <li><strong>{t.sec3_li2_t}</strong> {t.sec3_li2_d}</li>
         </ul>
       </section>
+
+      {/* Sección: Política de cookies */}
+      <section style={sectionStyle}>
+        <h2 style={subTitleStyle}>{t.sec4_title}</h2>
+        <p>{t.sec4_intro}</p>
+        <ul style={listStyle}>
+            <li><strong>XSRF-TOKEN:</strong> {t.sec4_li1}</li>
+            <li><strong>COOKIE_CONSENT:</strong> {t.sec4_li2}</li>
+            <li><strong>AUTH_TOKEN (LocalStorage):</strong> {t.sec4_li3}</li>
+            <li><strong>LANGUAGE_PREF:</strong> {t.sec4_li4}</li>
+        </ul>
+    </section>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
+import { registerTranslations } from '../lang/registerTranslations';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -9,6 +10,8 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState(null);
+  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+  const t = registerTranslations[lang];
   
   const { login } = useAuth(); // Usamos login para auto-loguear tras registrar
   const navigate = useNavigate();
@@ -18,13 +21,13 @@ const Register = () => {
     setError(null);
 
     if (password !== passwordConfirmation) {
-      return setError('Las contraseñas no coinciden');
+      return setError(t.error_password_match);
     }
 
     try {
       // 1. Llamada al registro en Laravel
       await api.post('/register', {
-        name,
+        // name,
         email,
         password,
         password_confirmation: passwordConfirmation
@@ -40,7 +43,7 @@ const Register = () => {
 
   return (
     <div style={formContainerStyle}>
-      <h2>Crear Cuenta</h2>
+      <h2>{t.title}</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       
       <form onSubmit={handleSubmit}>
@@ -49,25 +52,25 @@ const Register = () => {
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
         </div> */}
         <div style={inputGroupStyle}>
-          <label>Email:</label>
+          <label>{t.email}</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
         <div style={inputGroupStyle}>
-          <label>Contraseña:</label>
+          <label>{t.password}</label>
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
         <div style={inputGroupStyle}>
-          <label>Confirmar Contraseña:</label>
+          <label>{t.confirm_password}</label>
           <input type="password" value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} required />
         </div>
         
         <p style={{ fontSize: '0.8rem' }}>
-          Al registrarte, aceptas nuestros <Link to="/legal">Términos y Licencia</Link>.
+          {t.accept_terms} <Link to="/legal">{t.terms}</Link>.
         </p>
 
-        <button type="submit" style={btnStyle}>Registrarse</button>
+        <button type="submit" style={btnStyle}>{t.register}</button>
       </form>
-      <p>¿Ya tienes cuenta? <Link to="/login">Inicia sesión aquí</Link></p>
+      <p>{t.account_exist} <Link to="/login">{t.login}</Link></p>
     </div>
   );
 };

@@ -1,23 +1,26 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { homeTranslations } from '../lang/homeTranslations';
 
 const Home = () => {
   const { user } = useAuth();
+  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+  const t = homeTranslations[lang];
 
   return (
     <div style={{ textAlign: 'center', padding: '50px' }}>
-      <h1>Bienvenido a Creo</h1>
+      <h1>{t.title}</h1>
       <p style={{ fontSize: '1.2rem', color: '#666' }}>
-        Tu plataforma personal para gestionar y disfrutar de tu música.
+        {t.description}
       </p>
       
       <div style={{ marginTop: '30px' }}>
         {user ? (
-          <Link to="/explore" style={btnStyle}>Ir a mi Biblioteca</Link>
+          <Link to="/explore" style={btnStyle}>{t.explore}</Link>
         ) : (
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-            <Link to="/login" style={btnStyle}>Iniciar Sesión</Link>
-            <Link to="/register" style={{ ...btnStyle, background: '#eee', color: '#333' }}>Crear Cuenta</Link>
+            <Link to="/login" style={btnStyle}>{t.login}</Link>
+            <Link to="/register" style={{ ...btnStyle, background: '#eee', color: '#333' }}>{t.register}</Link>
           </div>
         )}
       </div>
