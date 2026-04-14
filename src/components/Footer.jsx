@@ -41,9 +41,9 @@ const Footer = () => {
 const footerStyle = {
   background: '#121212', // Fondo oscuro
   color: '#b3b3b3',
-  padding: '40px 20px',
+  padding: '80px 20px 90px 20px',
   marginTop: 'auto', // Empuja el footer al final si usas Flexbox en el layout
-  borderTop: '1px solid #282828',
+  borderTop: '1px solid #282828'
 };
 
 const containerStyle = {

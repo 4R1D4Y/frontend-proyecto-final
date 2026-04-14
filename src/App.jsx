@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Explore from './pages/Explore';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Favorites from './pages/Favorites';
 import Dashboard from './pages/Dashboard';
 import Legal from './pages/Legal';
 import Footer from './components/Footer';
@@ -33,8 +34,11 @@ function App() {
           <Link to="/register" style={{ color: 'white' }}>{lang === 'es' ? 'Registrarse' : 'Register'}</Link>
           </>
         ) : (
-          <Link to="/dashboard" style={{ color: 'white' }}>{lang === 'es' ? 'Mi Perfil' : 'My Profile'}</Link>
-        )}
+          <>
+            <Link to="/favorites" style={linkStyle}>{lang === 'es' ? 'Favoritos' : 'Favorites'}</Link>
+            <Link to="/dashboard" style={linkStyle}>{lang === 'es' ? 'Mi Perfil' : 'My Profile'}</Link>
+          </>
+         )}
 
         <div style={langDivStyle}>
           <span style={{ fontSize: '0.8rem', color: '#ccc' }}>{lang === 'es' ? 'Idioma' : 'Language'}:</span>
@@ -51,8 +55,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/favorites" element={<Favorites />} />
           <Route path="/legal" element={<Legal />} />
         </Routes>
       </main>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
-import { Heart, Bookmark } from 'lucide-react';
+import { ThumbsUp, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { exploreTranslations } from '../lang/exploreTranslations';
 
@@ -109,24 +109,26 @@ const Explore = () => {
             <div style={infoStyle}>
               <span>{song.collection_name || 'Single'}</span>
               <span> • </span>
+              <span>{new Date(song.release_date).toLocaleDateString()}</span> 
+              <span> • </span>
               <span>{song.reproductions} 🎧</span>
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
-              {/* BOTÓN LIKE (Corazón) */}
+              {/* BOTÓN LIKE (ThumbsUp) */}
               <button 
                 onClick={() => handleInteraction(song.id, 'like')}
                 style={iconBtnStyle}
               >
-                <Heart size={20} fill={song.is_liked ? "#1db954" : "none"} color={song.is_liked ? "#1db954" : "#b3b3b3"} />
+                <ThumbsUp size={20} fill={song.is_liked ? "#1db954" : "none"} color={song.is_liked ? "#1db954" : "#b3b3b3"} />
               </button>
 
-              {/* BOTÓN FAVORITO (Marcador) */}
+              {/* BOTÓN FAVORITO (Heart) */}
               <button 
                 onClick={() => handleInteraction(song.id, 'favorite')}
                 style={iconBtnStyle}
               >
-                <Bookmark size={20} fill={song.is_favorite ? "#1db954" : "none"} color={song.is_favorite ? "#1db954" : "#b3b3b3"} />
+                <Heart size={20} fill={song.is_favorite ? "#1db954" : "none"} color={song.is_favorite ? "#1db954" : "#b3b3b3"} />
               </button>
             </div>
 
@@ -204,6 +206,7 @@ const infoStyle = {
 
 const playBtnStyle = {
   width: '100%',
+  marginTop: '10px',
   padding: '8px',
   borderRadius: '20px',
   border: 'none',
