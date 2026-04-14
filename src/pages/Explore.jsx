@@ -1,19 +1,49 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
+import { Heart, Bookmark } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { exploreTranslations } from '../lang/exploreTranslations';
 
 const Explore = () => {
+  const { user } = useAuth();
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSong, setCurrentSong] = useState(null);
   const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+  const t = exploreTranslations[lang];
 
   // URL base para las imágenes (definida en tu .env de React)
   const storageUrl = import.meta.env.VITE_STORAGE_URL;
+
+  const handleInteraction = async (songId, type) => {
+    if (!user) return alert(t.interactions);
+
+    try {
+      // type será 'like' o 'favorite' según el botón pulsado
+      const res = await api.post(`/songs/${songId}/${type}`);
+      
+      // Actualizamos el estado local de la lista de canciones
+      setSongs(songs.map(song => {
+        if (song.id === songId) {
+          return { 
+            ...song, 
+            // Si el backend devuelve 'is_liked' o 'is_favorite', lo actualizamos
+            is_liked: type === 'like' ? res.data.is_liked : song.is_liked,
+            is_favorite: type === 'favorite' ? res.data.is_favorite : song.is_favorite
+          };
+        }
+        return song;
+      }));
+    } catch (error) {
+      console.error(`Error en ${type}:`, error);
+    }
+  };
 
   useEffect(() => {
   const fetchSongs = async () => {
     try {
       const res = await api.get('/songs');
+      console.log("Datos recibidos:", res.data[0]);
       setSongs(res.data);
     } catch (error) {
       console.error(error);
@@ -28,7 +58,7 @@ const Explore = () => {
 
   return (
     <div style={{ padding: '20px', paddingBottom: '80px' }}>
-      <h2>{lang === 'es' ? 'Explorar Música' : 'Explore Music'}</h2>
+      <h2>{t.title}</h2>
       <div style={gridStyle}>
         {songs.map(song => (
           <div key={song.id} style={cardStyle}>
@@ -51,11 +81,29 @@ const Explore = () => {
               <span>{song.reproductions} 🎧</span>
             </div>
 
+            <div style={{ display: 'flex', gap: '10px' }}>
+              {/* BOTÓN LIKE (Corazón) */}
+              <button 
+                onClick={() => handleInteraction(song.id, 'like')}
+                style={iconBtnStyle}
+              >
+                <Heart size={20} fill={song.is_liked ? "#1db954" : "none"} color={song.is_liked ? "#1db954" : "#b3b3b3"} />
+              </button>
+
+              {/* BOTÓN FAVORITO (Marcador) */}
+              <button 
+                onClick={() => handleInteraction(song.id, 'favorite')}
+                style={iconBtnStyle}
+              >
+                <Bookmark size={20} fill={song.is_favorite ? "#1db954" : "none"} color={song.is_favorite ? "#1db954" : "#b3b3b3"} />
+              </button>
+            </div>
+
             <button 
                 style={playBtnStyle} 
                 onClick={() => setCurrentSong(song)} // <--- Al hacer clic, enviamos la canción al reproductor
                 >
-                ▶ {lang === 'es' ? 'Reproducir' : 'Replay'}
+                ▶ {t.replay}
             </button>
           </div>
         ))}
@@ -148,6 +196,16 @@ const playerBarStyle = {
   justifyContent: 'space-between',
   padding: '0 20px',
   zIndex: 1000
+};
+
+const iconBtnStyle = {
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  padding: '5px',
+  display: 'flex',
+  alignItems: 'center',
+  transition: 'transform 0.2s'
 };
 
 export default Explore;

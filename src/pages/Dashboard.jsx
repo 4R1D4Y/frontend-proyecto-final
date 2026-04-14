@@ -27,7 +27,7 @@ const Dashboard = () => {
         onClick={handleLogout} // Usa la nueva función
         style={{ marginTop: '20px', background: 'red', color: 'white', border: 'none', padding: '10px', cursor: 'pointer' }}
       >
-        {this.logout}
+        {t.logout}
       </button>
     </div>
   );
