@@ -3,8 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { homeTranslations } from '../lang/homeTranslations';
 
 const Home = () => {
-  const { user } = useAuth();
-  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+  const { user, lang } = useAuth();
   const t = homeTranslations[lang];
 
   return (

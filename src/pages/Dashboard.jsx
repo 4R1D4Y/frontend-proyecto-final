@@ -1,12 +1,12 @@
-import { useState } from 'react';import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { dashBoardTranslations } from '../lang/dashboardTranslations';
 import api from '../api/axios';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, lang } = useAuth();
   const navigate = useNavigate(); // Inicializa el hook
-  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
   const t = dashBoardTranslations[lang];
 
   const [newEmail, setNewEmail] = useState(user?.email || '');

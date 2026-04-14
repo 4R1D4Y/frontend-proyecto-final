@@ -7,9 +7,8 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
   
-  const { login } = useAuth();
+  const { login, lang } = useAuth();
   const navigate = useNavigate();
   const t = loginTranslations[lang];
 

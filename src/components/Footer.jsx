@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { footerTranslations } from '../lang/footerTranslations';
 
 const Footer = () => {
-  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+  const { lang } = useAuth();
   const t = footerTranslations[lang];
   
   return (

@@ -1,7 +1,8 @@
+import { useAuth } from '../context/AuthContext';
 import { legalTranslations } from "../lang/legalTranslations";
 
 const Legal = () => {
-  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+  const { lang } = useAuth();
 
   const t = legalTranslations[lang];
   

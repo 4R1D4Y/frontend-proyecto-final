@@ -12,14 +12,7 @@ import { useAuth } from './context/AuthContext';
 
 
 function App() {
-  const { user } = useAuth();
-  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
-
-  // Función para cambiar idioma
-  const changeLanguage = (lang) => {
-    localStorage.setItem('LANGUAGE_PREF', lang);
-    window.location.reload(); 
-  };
+  const { user, lang, changeLanguage } = useAuth();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

@@ -5,11 +5,10 @@ import { Heart } from 'lucide-react';
 import { favoritesTranslations } from '../lang/favoritesTranslations';
 
 const Favorites = () => {
-  const { user } = useAuth();
+  const { user, lang } = useAuth();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSong, setCurrentSong] = useState(null);
-  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
   const t = favoritesTranslations[lang];
 
   useEffect(() => {

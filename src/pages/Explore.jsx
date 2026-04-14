@@ -5,11 +5,10 @@ import { useAuth } from '../context/AuthContext';
 import { exploreTranslations } from '../lang/exploreTranslations';
 
 const Explore = () => {
-  const { user } = useAuth();
+  const { user, lang } = useAuth();
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSong, setCurrentSong] = useState(null);
-  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
   const t = exploreTranslations[lang];
   const [sort, setSort] = useState('oldest');
 

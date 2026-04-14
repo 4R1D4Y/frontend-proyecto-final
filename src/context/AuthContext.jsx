@@ -7,6 +7,15 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // Nuevo estado para el idioma
+    const [lang, setLang] = useState(localStorage.getItem('LANGUAGE_PREF') || 'es');
+
+    // Función para cambiar idioma sin recargar
+    const changeLanguage = (newLang) => {
+        localStorage.setItem('LANGUAGE_PREF', newLang);
+        setLang(newLang);
+    };
+
     // 1. Verificar si hay sesión al cargar la página
     useEffect(() => {
         const checkUser = async () => {
@@ -48,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, lang, changeLanguage }}>
             {!loading && children}
         </AuthContext.Provider>
     );

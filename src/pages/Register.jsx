@@ -10,7 +10,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState(null);
-  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+  const { lang } = useAuth();
   const t = registerTranslations[lang];
   
   const { login } = useAuth(); // Usamos login para auto-loguear tras registrar
