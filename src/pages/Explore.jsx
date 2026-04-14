@@ -11,9 +11,10 @@ const Explore = () => {
   const [currentSong, setCurrentSong] = useState(null);
   const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
   const t = exploreTranslations[lang];
+  const [sort, setSort] = useState('oldest');
 
   // URL base para las imágenes (definida en tu .env de React)
-  const storageUrl = import.meta.env.VITE_STORAGE_URL;
+  // const storageUrl = import.meta.env.VITE_STORAGE_URL;
 
   const handleInteraction = async (songId, type) => {
     if (!user) return alert(t.interactions);
@@ -42,8 +43,7 @@ const Explore = () => {
   useEffect(() => {
   const fetchSongs = async () => {
     try {
-      const res = await api.get('/songs');
-      console.log("Datos recibidos:", res.data[0]);
+      const res = await api.get(`/songs?sort=${sort}`);
       setSongs(res.data);
     } catch (error) {
       console.error(error);
@@ -52,13 +52,44 @@ const Explore = () => {
     }
   };
   fetchSongs();
-}, []);
+}, [sort]);
 
   if (loading) return <div style={{ padding: '20px' }}>{lang === 'es' ? 'Cargando biblioteca...' : 'Loading songs...'}</div>;
 
   return (
     <div style={{ padding: '20px', paddingBottom: '80px' }}>
-      <h2>{t.title}</h2>
+      <div style={headerStyle}>
+        <h2>{t.title}</h2>
+        
+        {/* BOTONES DE FILTRADO */}
+        <div style={filterContainerStyle}>
+          <button 
+            onClick={() => setSort('oldest')} 
+            style={sort === 'oldest' ? activeFilterStyle : filterBtnStyle}
+          >
+            {t.filter1}
+          </button>
+          <button 
+            onClick={() => setSort('recent')} 
+            style={sort === 'recent' ? activeFilterStyle : filterBtnStyle}
+          >
+            {t.filter2}
+          </button>
+          <button 
+            onClick={() => setSort('reproductions')} 
+            style={sort === 'reproductions' ? activeFilterStyle : filterBtnStyle}
+          >
+            {t.filter3}
+          </button>
+          <button 
+            onClick={() => setSort('name_desc')} 
+            style={sort === 'name_desc' ? activeFilterStyle : filterBtnStyle}
+          >
+            {t.filter4}
+          </button>
+        </div>
+      </div>
+
       <div style={gridStyle}>
         {songs.map(song => (
           <div key={song.id} style={cardStyle}>
@@ -206,6 +237,37 @@ const iconBtnStyle = {
   display: 'flex',
   alignItems: 'center',
   transition: 'transform 0.2s'
+};
+
+const headerStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '20px',
+  flexWrap: 'wrap',
+  gap: '10px'
+};
+
+const filterContainerStyle = {
+  display: 'flex',
+  gap: '10px'
+};
+
+const filterBtnStyle = {
+  background: '#282828',
+  color: 'white',
+  border: '1px solid #444',
+  padding: '6px 15px',
+  borderRadius: '20px',
+  cursor: 'pointer',
+  fontSize: '0.9rem'
+};
+
+const activeFilterStyle = {
+  ...filterBtnStyle,
+  background: '#1db954',
+  borderColor: '#1db954',
+  fontWeight: 'bold'
 };
 
 export default Explore;
