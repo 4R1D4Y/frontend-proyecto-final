@@ -142,25 +142,25 @@ const Explore = () => {
         ))}
       </div>
 
-        {currentSong && (
-            <div style={playerBarStyle}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', width: '30%' }}>
-                <img src={currentSong.cover_path} style={{ width: '50px', borderRadius: '4px' }} alt="" />
-                <div>
-                    <p style={{ margin: 0, fontWeight: 'bold' }}>{currentSong.name}</p>
-                </div>
-                </div>
+      {currentSong && (
+          <div style={playerBarStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', width: '30%' }}>
+              <img src={currentSong.cover_path} style={{ width: '50px', borderRadius: '4px' }} alt="" />
+              <div>
+                  <p style={{ margin: 0, fontWeight: 'bold' }}>{currentSong.name}</p>
+              </div>
+              </div>
 
-                <audio 
-                autoPlay 
-                controls 
-                src={currentSong.audio_path} // Asumiendo que también viene la URL completa
-                style={{ width: '40%' }}
-                />
-                
-                <div style={{ width: '30%' }}></div> {/* Espacio para el volumen después */}
-            </div>
-        )}
+              <audio 
+              autoPlay 
+              controls 
+              src={currentSong.audio_path} // Asumiendo que también viene la URL completa
+              style={{ width: '40%' }}
+              />
+              
+              <div style={{ width: '30%' }}></div> {/* Espacio para el volumen después */}
+          </div>
+      )}
     </div>
   );
 };

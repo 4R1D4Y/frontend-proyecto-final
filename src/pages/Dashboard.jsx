@@ -49,6 +49,27 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    // Pedimos confirmación al usuario
+    const confirmDelete = window.confirm(t.confirmDelete);
+
+    if (confirmDelete) {
+        try {
+            // Llamamos a tu ruta: Route::delete('/user/delete', ...)
+            await api.delete('/user/delete');
+            
+            // Limpiamos la sesión en el frontend
+            localStorage.removeItem('AUTH_TOKEN');
+            window.location.href = '/'; // Redirección forzada a la Home
+        } catch (err) {
+            setMessage({ 
+                text: err.response?.data?.message || 'Error al eliminar la cuenta', 
+                type: 'error' 
+            });
+        }
+    }
+  };
+
   const handleLogout = async () => {
     await logout(); // Ejecuta la limpieza de datos
     navigate('/');  // Redirige al Home
@@ -74,7 +95,7 @@ const Dashboard = () => {
 
       {/* SECCIÓN EMAIL */}
       <section style={sectionStyle}>
-        <h3>Cambiar Email</h3>
+        <h3>{t.secEmail_t}</h3>
         <form onSubmit={handleUpdateEmail}>
           <input 
             type="email" 
@@ -82,20 +103,45 @@ const Dashboard = () => {
             onChange={(e) => setNewEmail(e.target.value)} 
             style={inputStyle}
           />
-          <button type="submit" style={btnUpdateStyle}>Actualizar Email</button>
+          <button type="submit" style={btnUpdateStyle}>{t.secEmail_b}</button>
         </form>
       </section>
 
       {/* SECCIÓN CONTRASEÑA */}
       <section style={sectionStyle}>
-        <h3>Cambiar Contraseña</h3>
+        <h3>{t.secPassword_t}</h3>
         <form onSubmit={handleUpdatePassword}>
-          <input type="password" placeholder="Contraseña actual" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} style={inputStyle} required />
-          <input type="password" placeholder="Nueva contraseña" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} style={inputStyle} required />
-          <input type="password" placeholder="Confirmar nueva contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} style={inputStyle} required />
-          <button type="submit" style={btnUpdateStyle}>Cambiar Contraseña</button>
+          <input type="password" placeholder={t.secPassword_placeh_curPass} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} style={inputStyle} required />
+          <input type="password" placeholder={t.secPassword_placeh_newPass} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} style={inputStyle} required />
+          <input type="password" placeholder={t.secPassword_placeh_confPass} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} style={inputStyle} required />
+          <button type="submit" style={btnUpdateStyle}>{t.secPassword_b}</button>
         </form>
       </section>
+
+      {/* SECCIÓN PELIGROSA: ELIMINAR CUENTA */}
+      <section style={{ marginTop: '50px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+        <h3 style={{ color: '#d32f2f' }}>
+            {t.secDelete_t}
+        </h3>
+        <p style={{ fontSize: '0.9rem', color: '#666' }}>
+            {t.secDelete_d}
+        </p>
+        <button 
+            onClick={handleDeleteAccount}
+            style={{ 
+                background: 'white', 
+                color: '#d32f2f', 
+                border: '1px solid #d32f2f', 
+                padding: '10px 20px', 
+                borderRadius: '5px', 
+                cursor: 'pointer',
+                fontWeight: 'bold' 
+            }}
+          >
+          {t.secDelete_b}
+        </button>
+      </section>
+
       <button 
         onClick={handleLogout} // Usa la nueva función
         style={{ marginTop: '20px', background: 'red', color: 'white', border: 'none', padding: '10px', cursor: 'pointer' }}
