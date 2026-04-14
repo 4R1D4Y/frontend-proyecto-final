@@ -38,8 +38,11 @@ function App() {
 
         <div style={langDivStyle}>
           <span style={{ fontSize: '0.8rem', color: '#ccc' }}>{lang === 'es' ? 'Idioma' : 'Language'}:</span>
-          <button onClick={() => changeLanguage('es')} style={langBtnStyle}>ES</button>
-          <button onClick={() => changeLanguage('en')} style={langBtnStyle}>EN</button>
+          {lang === 'es' ? (
+            <button onClick={() => changeLanguage('en')} style={langBtnStyle}>EN</button>
+          ) : (
+            <button onClick={() => changeLanguage('es')} style={langBtnStyle}>ES</button>
+          )}
         </div>
       </nav>
 

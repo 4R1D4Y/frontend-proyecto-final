@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 const CookieBanner = () => {
     const [isVisible, setIsVisible] = useState(false);
+    const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
 
     useEffect(() => {
         const consent = localStorage.getItem('COOKIE_CONSENT');
