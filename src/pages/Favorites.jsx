@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { Heart } from 'lucide-react';
+import { favoritesTranslations } from '../lang/favoritesTranslations';
 
 const Favorites = () => {
   const { user } = useAuth();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSong, setCurrentSong] = useState(null);
+  const lang = localStorage.getItem('LANGUAGE_PREF') || 'es';
+  const t = favoritesTranslations[lang];
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -33,22 +36,22 @@ const Favorites = () => {
     }
   };
 
-  if (loading) return <div style={{ padding: '20px' }}>Cargando tus favoritos...</div>;
+  if (loading) return <div style={{ padding: '20px' }}>{t.loading}</div>;
 
   return (
     <div style={{ padding: '20px', paddingBottom: '100px' }}>
-      <h2>Mis Favoritos ❤️</h2>
+      <h2>{t.title} ❤️</h2>
       
       {favorites.length === 0 ? (
-        <p>Aún no has guardado ninguna canción.</p>
+        <p>{t.no_songs}</p>
       ) : (
         <div style={gridStyle}>
           {favorites.map(song => (
             <div key={song.id} style={cardStyle}>
               {/* Nota: Tu controlador devuelve 'cover' en lugar de 'cover_path' */}
-              <img src={song.cover} alt={song.name} style={coverStyle} />
+              <img src={song.cover_path} alt={song.name} style={coverStyle} />
               <h3 style={titleStyle}>{song.name}</h3>
-              <p style={{ fontSize: '0.8rem', color: '#666' }}>Guardado el: {new Date(song.saved_date).toLocaleDateString()}</p>
+              <p style={{ fontSize: '0.8rem', color: '#666' }}>{t.date_saved} {new Date(song.saved_date).toLocaleDateString()}</p>
               
               <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                 <button onClick={() => removeFavorite(song.id)} style={iconBtnStyle}>
@@ -56,9 +59,9 @@ const Favorites = () => {
                 </button>
                 <button 
                   style={playBtnStyle} 
-                  onClick={() => setCurrentSong({ ...song, audio_path: song.audio, cover_path: song.cover })}
+                  onClick={() => setCurrentSong({ ...song, audio_path: song.audio_path, cover_path: song.cover_path })}
                 >
-                    ▶ Reproducir
+                    ▶ {t.replay}
                 </button>
               </div>
             </div>
