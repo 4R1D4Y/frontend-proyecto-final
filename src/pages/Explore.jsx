@@ -106,11 +106,9 @@ const Explore = () => {
             <h3 style={titleStyle}>{song.name}</h3>
             
             <div style={infoStyle}>
-              <span>{song.collection_name || 'Single'}</span>
-              <span> • </span>
-              <span>{new Date(song.release_date).toLocaleDateString()}</span> 
-              <span> • </span>
-              <span>{song.reproductions} 🎧</span>
+              <span style={detailStyle}>{song.collection_name || 'Single'}</span>
+              <span style={detailStyle}>{new Date(song.release_date).toLocaleDateString()}</span> 
+              <span style={detailStyle}>{song.reproductions} 🎧</span>
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -198,10 +196,16 @@ const titleStyle = {
 };
 
 const infoStyle = {
+  display: 'flex',
+  flexDirection: 'column',
   fontSize: '0.8rem',
   color: '#b3b3b3',
   marginBottom: '15px'
 };
+
+const detailStyle = {
+  padding: '2px 0px'
+}
 
 const playBtnStyle = {
   width: '100%',
@@ -247,7 +251,12 @@ const headerStyle = {
   alignItems: 'center',
   marginBottom: '20px',
   flexWrap: 'wrap',
-  gap: '10px'
+  gap: '10px',
+  position: 'sticky',
+  top: '60px', // Esta distancia debe ser la altura aproximada de tu Navbar
+  background: '#fff', // O el color de fondo de tu página para que no se transparente el texto de abajo
+  padding: '10px 0',
+  zIndex: 1000
 };
 
 const filterContainerStyle = {

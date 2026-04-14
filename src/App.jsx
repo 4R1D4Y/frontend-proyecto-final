@@ -18,7 +18,7 @@ function App() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
     <Router>
       {/* Mini Navbar para navegar mientras desarrollamos */}
-      <nav style={{ padding: '10px', background: '#222', color: 'white', display: 'flex', gap: '15px' }}>
+      <nav style={navStyle}>
         <Link to="/" style={{ color: 'white' }}>{lang === 'es' ? 'Inicio' : 'Home'}</Link>
         <Link to="/explore" style={{ color: 'white' }}>{lang === 'es' ? 'Explorar' : 'Explore'}</Link>
         {!user ? (
@@ -71,7 +71,12 @@ const navStyle = {
   color: 'white', 
   display: 'flex', 
   justifyContent: 'space-between', // Separa links de idiomas
-  alignItems: 'center' 
+  alignItems: 'center',
+  position: 'sticky',
+  top: 0,
+  zIndex: 1100, // Mayor que el reproductor y las fotos
+  boxShadow: '0 2px 10px rgba(0,0,0,0.5)' // Opcional: para que se vea sombra al bajar
+
 };
 
 const linkStyle = { color: 'white', textDecoration: 'none' };
