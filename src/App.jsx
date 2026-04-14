@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
+import About from './pages/About';
 import Explore from './pages/Explore';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -20,6 +21,7 @@ function App() {
       {/* Mini Navbar para navegar mientras desarrollamos */}
       <nav style={navStyle}>
         <Link to="/" style={{ color: 'white' }}>{lang === 'es' ? 'Inicio' : 'Home'}</Link>
+        <Link to="/about" style={{ color: 'white' }}>{lang === 'es' ? 'Sobre Creo' : 'About Creo'}</Link>
         <Link to="/explore" style={{ color: 'white' }}>{lang === 'es' ? 'Explorar' : 'Explore'}</Link>
         {!user ? (
           <>
@@ -46,6 +48,7 @@ function App() {
       <main style={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
