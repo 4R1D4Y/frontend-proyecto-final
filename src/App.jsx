@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Favorites from './pages/Favorites';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import Legal from './pages/Legal';
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
@@ -20,6 +21,7 @@ function App() {
     <Router>
       {/* Mini Navbar para navegar mientras desarrollamos */}
       <nav style={navStyle}>
+        <h3>Creo Music</h3>
         <Link to="/" style={{ color: 'white' }}>{lang === 'es' ? 'Inicio' : 'Home'}</Link>
         <Link to="/about" style={{ color: 'white' }}>{lang === 'es' ? 'Sobre Creo' : 'About Creo'}</Link>
         <Link to="/explore" style={{ color: 'white' }}>{lang === 'es' ? 'Explorar' : 'Explore'}</Link>
@@ -32,6 +34,9 @@ function App() {
           <>
             <Link to="/favorites" style={linkStyle}>{lang === 'es' ? 'Favoritos' : 'Favorites'}</Link>
             <Link to="/dashboard" style={linkStyle}>{lang === 'es' ? 'Mi Perfil' : 'My Profile'}</Link>
+            {user.role === 'admin' &&
+              <Link to="/admin" style={linkStyle}>{lang === 'es' ? 'Admin' : 'Admin'}</Link>
+            }
           </>
          )}
 
@@ -54,6 +59,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/legal" element={<Legal />} />
         </Routes>
       </main>

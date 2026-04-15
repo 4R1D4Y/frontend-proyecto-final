@@ -1,22 +1,29 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { dashBoardTranslations } from '../lang/dashboardTranslations';
 import api from '../api/axios';
 
 const Dashboard = () => {
   const { user, logout, lang } = useAuth();
   const navigate = useNavigate(); // Inicializa el hook
+
+  // VARIABLE TEXTO
   const t = dashBoardTranslations[lang];
 
+  // VARIABLE EMAIL
   const [newEmail, setNewEmail] = useState(user?.email || '');
 
+  // VARIABLES CONTRASEÑA
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
+  // VARIABLE MENSAJE
   const [message, setMessage] = useState({ text: '', type: '' });
 
+  // MANEJADOR ACTUALIZAR EMAIL
   const handleUpdateEmail = async (e) => {
     e.preventDefault();
     try {
@@ -31,6 +38,7 @@ const Dashboard = () => {
     }
   };
 
+  // MANEJADOR ACTUALIZAR CONTRASEÑA
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
@@ -49,11 +57,23 @@ const Dashboard = () => {
     }
   };
 
+  // MANEJADOR ELIMINAR CUENTA
   const handleDeleteAccount = async () => {
     // Pedimos confirmación al usuario
-    const confirmDelete = window.confirm(t.confirmDelete);
+    const confirmDelete = await Swal.fire({
+        title: t.confirmDelete_t,
+        text: t.confirmDelete_d,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#333',
+        confirmButtonText: t.confirmDeleteButtonConfirm,
+        cancelButtonText: t.confirmDeleteButtonCancel,
+        background: '#181818',
+        color: '#fff'
+    });
 
-    if (confirmDelete) {
+    if (confirmDelete.isConfirmed) {
         try {
             // Llamamos a tu ruta: Route::delete('/user/delete', ...)
             await api.delete('/user/delete');
@@ -81,12 +101,21 @@ const Dashboard = () => {
     <div style={{ padding: '20px' }}>
       <h2>{t.title}</h2>
 
-      <div style={{ background: '#f4f4f4', padding: '15px', borderRadius: '8px' }}>
+      <div style={{ background: '#f4f4f4', marginBottom: '10px', padding: '15px', borderRadius: '8px' }}>
         {/* <p><strong>Nombre:</strong> {user.name}</p> */}
         <p><strong>{t.email}</strong> {user.email}</p>
         <p><strong>{t.role}</strong> {user.role || 'Usuario'}</p>
+
+        {/* BOTÓN CERRAR SESIÓN */}
+        <button 
+          onClick={handleLogout} // Usa la nueva función
+          style={{ marginTop: '20px', background: 'red', color: 'white', border: 'none', padding: '10px', cursor: 'pointer' }}
+        >
+          {t.logout}
+        </button>
       </div>
 
+      {/* MENSAJE DE ACCIERTO/ERROR */}
       {message.text && (
         <p style={{ color: message.type === 'success' ? 'green' : 'red', fontWeight: 'bold' }}>
           {message.text}
@@ -141,13 +170,6 @@ const Dashboard = () => {
           {t.secDelete_b}
         </button>
       </section>
-
-      <button 
-        onClick={handleLogout} // Usa la nueva función
-        style={{ marginTop: '20px', background: 'red', color: 'white', border: 'none', padding: '10px', cursor: 'pointer' }}
-      >
-        {t.logout}
-      </button>
     </div>
   );
 };

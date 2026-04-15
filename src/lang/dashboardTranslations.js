@@ -15,7 +15,10 @@ export const dashBoardTranslations = {
         secDelete_t: "Zona Peligrosa",
         secDelete_d: "Una vez elimines tu cuenta, no seras capaz de recuperar tus favoritos y ajustes.",
         secDelete_b: "Borrar mi cuenta permanentemente",
-        confirmDelete: "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer."
+        confirmDelete_t: "¿Estas seguro?",
+        confirmDelete_d: "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
+        confirmDeleteButtonConfirm: "Sí, estoy seguro",
+        confirmDeleteButtonCancel: "Cancelar"
     },
     en: {
         loading: "Loading profile...",
@@ -33,6 +36,9 @@ export const dashBoardTranslations = {
         secDelete_t: "Danger Zone",
         secDelete_d: "Once you delete your account, you will not be able to recover your favorites or settings.",
         secDelete_b: "Delete my account permanently",
-        confirmDelete: "Are you sure you want to delete your account? This action cannot be undone."
+        confirmDelete_t: "Are you sure?",
+        confirmDelete_d: "Are you sure you want to delete your account? This action cannot be undone.",
+        confirmDeleteButtonConfirm: "Yes I'm sure",
+        confirmDeleteButtonCancel: "Cancel"
     }
 }

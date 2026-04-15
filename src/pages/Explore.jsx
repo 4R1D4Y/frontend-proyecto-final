@@ -150,7 +150,7 @@ const Explore = () => {
 
               <audio 
               autoPlay 
-              controls 
+              controls
               src={currentSong.audio_path} // Asumiendo que también viene la URL completa
               style={{ width: '40%' }}
               />
@@ -253,7 +253,7 @@ const headerStyle = {
   flexWrap: 'wrap',
   gap: '10px',
   position: 'sticky',
-  top: '40px', // Esta distancia debe ser la altura aproximada de tu Navbar
+  top: '80px', // Esta distancia debe ser la altura aproximada de tu Navbar
   background: '#fff', // O el color de fondo de tu página para que no se transparente el texto de abajo
   padding: '10px 0',
   zIndex: 1000
