@@ -3,7 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import Swal from 'sweetalert2';
 import { Trash2, Edit, Plus, Users, Music, Eye, EyeOff } from 'lucide-react';
-import AddSongForm from '../components/AddSongForm'; // Crearemos este ahora
+import AddSongForm from '../components/AddSongForm';
+import EditSongForm from '../components/EditSongForm';
 import { adminDashboardTranslations } from '../lang/adminDashboardTranslations';
 
 const AdminDashboard = () => {
@@ -11,6 +12,8 @@ const AdminDashboard = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const [editingSong, setEditingSong] = useState(null);
+  
   const { lang } = useAuth();
   const t = adminDashboardTranslations[lang];
 
@@ -78,7 +81,10 @@ const AdminDashboard = () => {
       {/* Formulario condicional */}
       {showAddForm && (
         <div style={formWrapper}>
-          <AddSongForm onSongAdded={() => { setShowAddForm(false); fetchSongs(); }} />
+          <AddSongForm 
+            allSongs={songs}
+            onSongAdded={() => { setShowAddForm(false); fetchSongs(); }} 
+          />
         </div>
       )}
 
@@ -108,18 +114,34 @@ const AdminDashboard = () => {
                 </td>
                 <td>{song.reproductions} 🎧</td>
                 <td style={actionsCell}>
-                  <button onClick={() => toggleStatus(song.id, song.status)} title="Ocultar/Mostrar" style={btnAction}>
-                    {song.status === 'active' ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                  <button onClick={() => handleDelete(song.id)} title="Eliminar" style={{...btnAction, color: 'red'}}>
-                    <Trash2 size={18} />
-                  </button>
+                    <button onClick={() => setEditingSong(song)} style={btnAction}>
+                        <Edit size={18} color="blue" />
+                    </button>  
+                    <button onClick={() => toggleStatus(song.id, song.status)} title="Ocultar/Mostrar" style={btnAction}>
+                        {song.status === 'active' ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                    <button onClick={() => handleDelete(song.id)} title="Eliminar" style={{...btnAction, color: 'red'}}>
+                        <Trash2 size={18} />
+                    </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Panel lateral de edición (Drawer) */}
+      {editingSong && (
+        <EditSongForm 
+          song={editingSong} 
+          allSongs={songs}
+          onSongUpdated={() => { 
+            setEditingSong(null); 
+            fetchSongs(); 
+          }} 
+          onCancel={() => setEditingSong(null)} 
+        />
+      )}
     </div>
   );
 };

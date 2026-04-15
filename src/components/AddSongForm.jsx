@@ -4,7 +4,7 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { addSongFormTranslations } from '../lang/addSongFormTranslations';
 
-const AddSongForm = ({ onSongAdded }) => {
+const AddSongForm = ({ allSongs, onSongAdded }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -20,10 +20,24 @@ const AddSongForm = ({ onSongAdded }) => {
         name: '',
         type: 'single',
         release_date: '',
-        duration: '',
+        duration: 0,
         collection_name: '',
-        collection_order: ''
+        collection_order: 1
     });
+
+    const handleCollectionNameChange = (name) => {
+        let nextOrder = 1;
+        if (name.trim() !== '') {
+            const albumSongs = allSongs.filter(s => 
+                s.collection_name?.toLowerCase() === name.toLowerCase()
+            );
+            if (albumSongs.length > 0) {
+                const maxOrder = Math.max(...albumSongs.map(s => s.collection_order || 0));
+                nextOrder = maxOrder + 1;
+            }
+        }
+        setFormData({ ...formData, collection_name: name, collection_order: nextOrder });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -101,6 +115,28 @@ const AddSongForm = ({ onSongAdded }) => {
                 </select>
             </div>
 
+            {formData.type !== 'single' && (
+                <div style={collectionBoxStyle}>
+                    <div style={inputGroup}>
+                        <label>{t.inputCollectionName_t}</label>
+                        <input 
+                            type="text" 
+                            value={formData.collection_name}
+                            onChange={e => handleCollectionNameChange(e.target.value)} 
+                            placeholder="Ej: Adrenaline EP"
+                        />
+                    </div>
+                    <div style={inputGroup}>
+                        <label>{t.collectionOrder}</label>
+                        <input 
+                            type="number" 
+                            value={formData.collection_order}
+                            onChange={e => setFormData({...formData, collection_order: e.target.value})} 
+                        />
+                    </div>
+                </div>
+            )}
+
             <div style={inputGroup}>
                 <label>{t.inputDate_t}</label>
                 <input type="date" required onChange={e => setFormData({...formData, release_date: e.target.value})} />
@@ -135,5 +171,16 @@ const AddSongForm = ({ onSongAdded }) => {
 const formGrid = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' };
 const inputGroup = { display: 'flex', flexDirection: 'column', gap: '5px' };
 const btnSubmit = { padding: '12px', background: '#1db954', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginTop: '10px' };
+
+const collectionBoxStyle = {
+    gridColumn: '1 / -1', // Ocupa las dos columnas del grid
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '20px',
+    background: '#f0fdf4',
+    padding: '15px',
+    borderRadius: '8px',
+    border: '1px solid #1db954'
+};
 
 export default AddSongForm;

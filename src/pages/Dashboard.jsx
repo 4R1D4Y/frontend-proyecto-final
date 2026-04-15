@@ -148,7 +148,7 @@ const Dashboard = () => {
       </section>
 
       {/* SECCIÓN PELIGROSA: ELIMINAR CUENTA */}
-      <section style={{ marginTop: '50px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+      <section style={{ marginTop: '50px', marginBottom: '50px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
         <h3 style={{ color: '#d32f2f' }}>
             {t.secDelete_t}
         </h3>
