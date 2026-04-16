@@ -11,10 +11,12 @@ const AdminDashboard = () => {
   const [songs, setSongs] = useState([]);
   const [users, setUsers] = useState([]);
   const [view, setView] = useState('songs');
-  const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const [showAddForm, setShowAddForm] = useState(false);
   const [editingSong, setEditingSong] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchUser, setSearchUser] = useState('');
   
   const { lang } = useAuth();
   const t = adminDashboardTranslations[lang];
@@ -22,6 +24,14 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchData();
   }, [view]);
+
+  const filteredSongs = songs.filter(song => 
+    song.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredUsers = users.filter(user => 
+    user.email.toLowerCase().includes(searchUser.toLowerCase())
+  );
 
   const fetchData = async () => {
     setLoading(true);
@@ -144,11 +154,6 @@ const AdminDashboard = () => {
               <Plus size={20} /> {showAddForm ? t.addSongButtonClose : t.addSongButtonOpen}
             </button>
           </div>
-          {showAddForm && (
-            <div style={formWrapper}>
-              <AddSongForm allSongs={songs} onSongAdded={() => { setShowAddForm(false); fetchData(); }} />
-            </div>
-          )}
           {/* Formulario condicional */}
           {showAddForm && (
             <div style={formWrapper}>
@@ -158,6 +163,16 @@ const AdminDashboard = () => {
               />
             </div>
           )}
+
+          <div style={{ marginBottom: '20px' }}>
+            <input
+              type="text"
+              placeholder={t.songSearchBar}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={searchInputStyle}
+            />
+          </div>
 
           {/* Tabla de Gestión */}
           <div style={tableContainer}>
@@ -174,7 +189,7 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {songs.map(song => (
+                {filteredSongs.map(song => (
                   <tr key={song.id} style={trStyle}>
                     <td><img src={song.cover_url} style={miniCover} alt="" /></td>
                     <td><strong>{song.name}</strong></td>
@@ -217,7 +232,19 @@ const AdminDashboard = () => {
           )}
         </>
       ) : (
-        /* TABLA DE USUARIOS */
+        <>
+        {/* BUSCADOR DE USUARIOS */}
+        <div style={{ marginBottom: '20px' }}>
+          <input
+            type="text"
+            placeholder={t.userSearchBar}
+            value={searchUser}
+            onChange={(e) => setSearchUser(e.target.value)}
+            style={searchInputStyle} // Reutilizamos el estilo del buscador de canciones
+          />
+        </div>
+
+        {/* TABLA DE USUARIOS */}
         <div style={tableContainer}>
           <table style={tableStyle}>
             <thead>
@@ -231,7 +258,7 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map(u => (
+              {filteredUsers.map(u => (
                 <tr key={u.id} style={trStyle}>
                   <td>{u.id}</td>
                   {/* <td><strong>{u.name}</strong></td> */}
@@ -272,6 +299,7 @@ const AdminDashboard = () => {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );
@@ -317,4 +345,16 @@ const selectStyle = {
   border: '1px solid #ccc',
   cursor: 'pointer'
 };
+
+const searchInputStyle = {
+  width: '100%',
+  padding: '12px 20px',
+  borderRadius: '8px',
+  border: '1px solid #ddd',
+  fontSize: '1rem',
+  outline: 'none',
+  boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+  boxSizing: 'border-box'
+};
+
 export default AdminDashboard;
