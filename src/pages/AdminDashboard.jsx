@@ -9,6 +9,8 @@ import { adminDashboardTranslations } from '../lang/adminDashboardTranslations';
 
 const AdminDashboard = () => {
   const [songs, setSongs] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [view, setView] = useState('songs');
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -18,15 +20,21 @@ const AdminDashboard = () => {
   const t = adminDashboardTranslations[lang];
 
   useEffect(() => {
-    fetchSongs();
-  }, []);
+    fetchData();
+  }, [view]);
 
-  const fetchSongs = async () => {
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      const res = await api.get('/admin/songs/all');
-      setSongs(res.data);
+      if (view === 'songs') {
+        const res = await api.get('/admin/songs/all');
+        setSongs(res.data);
+      } else {
+        const res = await api.get('/admin/users');
+        setUsers(res.data);
+      }
     } catch (err) {
-      console.error("Error al cargar canciones", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -67,80 +75,203 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleUserStatus = async (user, newStatus) => {
+    let suspensionTime = null;
+
+    // Si es suspensión, pedimos la fecha antes de enviar
+    if (newStatus === 'suspended') {
+      const { value: date } = await Swal.fire({
+        title: t.suspendDate_t,
+        html: '<input type="datetime-local" id="swal-input1" class="swal2-input">',
+        focusConfirm: false,
+        background: '#181818',
+        color: '#fff',
+        confirmButtonColor: '#1db954',
+        preConfirm: () => {
+          return document.getElementById('swal-input1').value;
+        }
+      });
+
+      if (!date) return; // Cancelado si no hay fecha
+      suspensionTime = date;
+    }
+
+    // Confirmación final
+    const result = await Swal.fire({
+      title: `${t.confirmStatusUser_t} ${newStatus}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#1db954',
+      background: '#181818',
+      color: '#fff'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.patch(`/admin/users/${user.id}/status`, { 
+          status: newStatus,
+          suspension_time: suspensionTime // Enviamos la fecha al backend
+        });
+        
+        // Actualizamos la lista localmente
+        setUsers(users.map(u => u.id === user.id ? { ...u, status: newStatus, suspension_time: suspensionTime } : u));
+        Swal.fire(t.confirmedStatusUser_t, t.confirmedStatusUser_d, 'success');
+      } catch (err) {
+        Swal.fire('Error', err.response?.data?.message || t.errorChangeStatusUser, 'error');
+      }
+    }
+  };
+
   if (loading) return <p style={{ padding: '20px' }}>{t.loading}</p>;
 
   return (
     <div style={adminContainer}>
       <header style={adminHeader}>
         <h1>{t.title}</h1>
-        <button onClick={() => setShowAddForm(!showAddForm)} style={btnPrimary}>
-          <Plus size={20} /> {showAddForm ? t.addSongButtonClose : t.addSongButtonOpen}
+        {/* BOTONES DE PESTAÑA */}
+        <button onClick={() => setView('songs')} style={view === 'songs' ? btnNavActive : btnNav}>
+          <Music size={18} /> {t.songsTab}
+        </button>
+        <button onClick={() => setView('users')} style={view === 'users' ? btnNavActive : btnNav}>
+          <Users size={18} /> {t.usersTab}
         </button>
       </header>
 
-      {/* Formulario condicional */}
-      {showAddForm && (
-        <div style={formWrapper}>
-          <AddSongForm 
-            allSongs={songs}
-            onSongAdded={() => { setShowAddForm(false); fetchSongs(); }} 
-          />
-        </div>
-      )}
+      {view === 'songs' ? (
+        <>
+          <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+            <button onClick={() => setShowAddForm(!showAddForm)} style={btnPrimary}>
+              <Plus size={20} /> {showAddForm ? t.addSongButtonClose : t.addSongButtonOpen}
+            </button>
+          </div>
+          {showAddForm && (
+            <div style={formWrapper}>
+              <AddSongForm allSongs={songs} onSongAdded={() => { setShowAddForm(false); fetchData(); }} />
+            </div>
+          )}
+          {/* Formulario condicional */}
+          {showAddForm && (
+            <div style={formWrapper}>
+              <AddSongForm 
+                allSongs={songs}
+                onSongAdded={() => { setShowAddForm(false); fetchData(); }} 
+              />
+            </div>
+          )}
 
-      {/* Tabla de Gestión */}
-      <div style={tableContainer}>
-        <table style={tableStyle}>
-          <thead>
-            <tr style={theadStyle}>
-              <th>{t.columnCover}</th>
-              <th>{t.columnName}</th>
-              <th>{t.columnType}</th>
-              <th>{t.columnStatus}</th>
-              <th>{t.columnReproductions}</th>
-              <th>{t.columnActions}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {songs.map(song => (
-              <tr key={song.id} style={trStyle}>
-                <td><img src={song.cover_url} style={miniCover} alt="" /></td>
-                <td><strong>{song.name}</strong></td>
-                <td>{song.type.toUpperCase()}</td>
-                <td>
-                  <span style={song.status === 'active' ? statusActive : statusHidden}>
-                    {song.status}
-                  </span>
-                </td>
-                <td>{song.reproductions} 🎧</td>
-                <td style={actionsCell}>
-                    <button onClick={() => setEditingSong(song)} style={btnAction}>
-                        <Edit size={18} color="blue" />
-                    </button>  
-                    <button onClick={() => toggleStatus(song.id, song.status)} title="Ocultar/Mostrar" style={btnAction}>
-                        {song.status === 'active' ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                    <button onClick={() => handleDelete(song.id)} title="Eliminar" style={{...btnAction, color: 'red'}}>
-                        <Trash2 size={18} />
-                    </button>
-                </td>
+          {/* Tabla de Gestión */}
+          <div style={tableContainer}>
+            <table style={tableStyle}>
+              <thead>
+                <tr style={theadStyle}>
+                  <th>{t.songsColumnCover}</th>
+                  <th>{t.songsColumnName}</th>
+                  <th>{t.songsColumnType}</th>
+                  <th>{t.songsColumnCollectionName}</th>
+                  <th>{t.songsColumnStatus}</th>
+                  <th>{t.songsColumnReproductions}</th>
+                  <th>{t.songsColumnActions}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {songs.map(song => (
+                  <tr key={song.id} style={trStyle}>
+                    <td><img src={song.cover_url} style={miniCover} alt="" /></td>
+                    <td><strong>{song.name}</strong></td>
+                    <td>{song.type.toUpperCase()}</td>
+                    <td>{song.collection_name}</td>
+                    <td>
+                      <span style={song.status === 'active' ? statusActive : statusHidden}>
+                        {song.status}
+                      </span>
+                    </td>
+                    <td>{song.reproductions} 🎧</td>
+                    <td style={actionsCell}>
+                        <button onClick={() => setEditingSong(song)} style={btnAction}>
+                            <Edit size={18} color="blue" />
+                        </button>  
+                        <button onClick={() => toggleStatus(song.id, song.status)} title="Ocultar/Mostrar" style={btnAction}>
+                            {song.status === 'active' ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                        <button onClick={() => handleDelete(song.id)} title="Eliminar" style={{...btnAction, color: 'red'}}>
+                            <Trash2 size={18} />
+                        </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Panel lateral de edición (Drawer) */}
+          {editingSong && (
+            <EditSongForm 
+              song={editingSong} 
+              allSongs={songs}
+              onSongUpdated={() => { 
+                setEditingSong(null); 
+                fetchData(); 
+              }} 
+              onCancel={() => setEditingSong(null)} 
+            />
+          )}
+        </>
+      ) : (
+        /* TABLA DE USUARIOS */
+        <div style={tableContainer}>
+          <table style={tableStyle}>
+            <thead>
+              <tr style={theadStyle}>
+                <th>{t.usersColumnId}</th>
+                {/* <th>Nombre</th> */}
+                <th>{t.usersColumnEmail}</th>
+                <th>{t.usersColumnRole}</th>
+                <th>{t.usersColumnStatus}</th>
+                <th>{t.usersColumnActions}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Panel lateral de edición (Drawer) */}
-      {editingSong && (
-        <EditSongForm 
-          song={editingSong} 
-          allSongs={songs}
-          onSongUpdated={() => { 
-            setEditingSong(null); 
-            fetchSongs(); 
-          }} 
-          onCancel={() => setEditingSong(null)} 
-        />
+            </thead>
+            <tbody>
+              {users.map(u => (
+                <tr key={u.id} style={trStyle}>
+                  <td>{u.id}</td>
+                  {/* <td><strong>{u.name}</strong></td> */}
+                  <td>{u.email}</td>
+                  <td>{u.role.toUpperCase()}</td>
+                  <td>
+                    <span style={u.status === 'active' ? statusActive : statusHidden}>
+                      {u.status.toUpperCase()}
+                    </span>
+                  </td>
+                  <td>
+                    {u.role !== 'admin' ? (
+                      <select 
+                        value={u.status} 
+                        onChange={(e) => handleUserStatus(u, e.target.value)}
+                        style={selectStyle}
+                      >
+                        <option value="active">{t.usersActionActive}</option>
+                        <option value="suspended">{t.usersActionSuspend}</option>
+                        <option value="blocked">{t.usersActionBlock}</option>
+                      </select>
+                    ) : (
+                      <span style={{ fontSize: '0.8rem', color: '#999' }}>{t.usersAdmin}</span>
+                    )}
+                  </td>
+                  <td>
+                    <span style={u.status === 'active' ? statusActive : statusHidden}>
+                      {u.status.toUpperCase()}
+                    </span>
+                    {u.status === 'suspended' && u.suspension_time && (
+                      <div style={{ fontSize: '0.7rem', color: '#888' }}>
+                        Hasta: {new Date(u.suspension_time).toLocaleString()}
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
@@ -161,4 +292,29 @@ const statusActive = { color: '#1db954', fontWeight: 'bold', fontSize: '0.8rem' 
 const statusHidden = { color: '#999', fontWeight: 'bold', fontSize: '0.8rem' };
 const formWrapper = { marginBottom: '30px', padding: '20px', border: '1px solid #ddd', borderRadius: '12px', background: '#fdfdfd' };
 
+const btnNav = {
+  background: '#282828',
+  color: 'white',
+  border: 'none',
+  padding: '10px 20px',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  transition: '0.3s'
+};
+
+const btnNavActive = {
+  ...btnNav,
+  background: '#1db954',
+  fontWeight: 'bold'
+};
+
+const selectStyle = {
+  padding: '5px',
+  borderRadius: '4px',
+  border: '1px solid #ccc',
+  cursor: 'pointer'
+};
 export default AdminDashboard;
