@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { loginTranslations } from '../lang/loginTranslations';
 
 const Login = () => {
@@ -19,8 +20,25 @@ const Login = () => {
       await login({ email, password });
       navigate('/'); // Si sale bien, nos manda a la Home
     } catch (err) {
-      setError(t.error);
-      console.error(err);
+      if (err.response?.status === 403) {
+        const { status, until, message } = err.response.data;
+        Swal.fire({
+            title: status === 'suspended' ? t.accountSuspended : t.accountBlocked,
+            html: `
+                <p>${ status === 'suspended' ? t.accountSuspended_message : t.accountBlocked_message}</p>
+                ${until ? `<p><strong>${t.accountAvailable}</strong> ${until}</p>` : ''}
+                <p style="font-size: 0.8rem; color: #888; margin-top: 15px;">
+                    ${t.appeal}
+                </p>
+            `,
+            icon: 'error',
+            background: '#181818',
+            color: '#fff',
+            confirmButtonColor: '#1db954'
+        });
+    } else {
+        setError(err.response?.data?.message || t.error);
+    }
     }
   };
 
