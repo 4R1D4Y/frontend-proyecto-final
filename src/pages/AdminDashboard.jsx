@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import Swal from 'sweetalert2';
-import { Trash2, Edit, Plus, Users, Music, Eye, EyeOff } from 'lucide-react';
+import { Trash2, Edit, Plus, Users, Music, Eye, EyeOff, Activity, MousePointerClick, ExternalLink, FileText } from 'lucide-react';
 import AddSongForm from '../components/AddSongForm';
 import EditSongForm from '../components/EditSongForm';
 import { adminDashboardTranslations } from '../lang/adminDashboardTranslations';
@@ -10,13 +10,15 @@ import { adminDashboardTranslations } from '../lang/adminDashboardTranslations';
 const AdminDashboard = () => {
   const [songs, setSongs] = useState([]);
   const [users, setUsers] = useState([]);
-  const [view, setView] = useState('songs');
+  const [view, setView] = useState('stats');
   const [loading, setLoading] = useState(true);
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSong, setEditingSong] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchUser, setSearchUser] = useState('');
+  const [stats, setStats] = useState(null);
+  const [events, setEvents] = useState([]);
   
   const { lang } = useAuth();
   const t = adminDashboardTranslations[lang];
@@ -24,6 +26,35 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchData();
   }, [view]);
+
+  const getEventIcon = (type) => {
+    switch (type) {
+      case 'playtime': return <Music size={20} />;
+      case 'license_view': return <FileText size={20} />;
+      case 'catalog_click': return <MousePointerClick size={20} />;
+      case 'social_redirect': return <ExternalLink size={20} />;
+      default: return <Activity size={20} />;
+    }
+  };
+
+  const getIconContainerStyle = (type) => {
+    const colors = {
+      playtime: { bg: '#e8f5e9', color: '#2e7d32' },
+      license_view: { bg: '#fff3e0', color: '#ef6c00' },
+      catalog_click: { bg: '#e3f2fd', color: '#1565c0' },
+      social_redirect: { bg: '#fce4ec', color: '#c2185b' }
+    };
+    const style = colors[type] || { bg: '#f5f5f5', color: '#616161' };
+    return {
+      padding: '10px',
+      borderRadius: '10px',
+      backgroundColor: style.bg,
+      color: style.color,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    };
+  };
 
   const filteredSongs = songs.filter(song => 
     song.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -36,12 +67,18 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
+      const resStats = await api.get('/admin/stats');
+      setStats(resStats.data);
+
       if (view === 'songs') {
         const res = await api.get('/admin/songs/all');
         setSongs(res.data);
-      } else {
+      } else if (view === 'users') {
         const res = await api.get('/admin/users');
         setUsers(res.data);
+      } else if (view === 'stats') {
+        const res = await api.get('/admin/events');
+        setEvents(res.data);
       }
     } catch (err) {
       console.error(err);
@@ -139,6 +176,9 @@ const AdminDashboard = () => {
       <header style={adminHeader}>
         <h1>{t.title}</h1>
         {/* BOTONES DE PESTAÑA */}
+        <button onClick={() => setView('stats')} style={view === 'stats' ? btnNavActive : btnNav}>
+          <Activity size={18} /> {t.statsTab}
+        </button>
         <button onClick={() => setView('songs')} style={view === 'songs' ? btnNavActive : btnNav}>
           <Music size={18} /> {t.songsTab}
         </button>
@@ -147,7 +187,68 @@ const AdminDashboard = () => {
         </button>
       </header>
 
-      {view === 'songs' ? (
+      {view === 'stats' && (
+        <>
+        <div style={statsGridStyle}>
+          <div style={statCardStyle}>
+            <Users color="#1db954" size={24} />
+            <div>
+              <p style={statLabelStyle}>{t.statsTotalUsers}</p>
+              <h2 style={statValueStyle}>{stats.overview.total_users}</h2>
+            </div>
+          </div>
+
+          <div style={statCardStyle}>
+            <Music color="#1db954" size={24} />
+            <div>
+              <p style={statLabelStyle}>{t.statsTotalSongs}</p>
+              <h2 style={statValueStyle}>{stats.overview.total_songs}</h2>
+            </div>
+          </div>
+
+          <div style={statCardStyle}>
+            <Activity color="#1db954" size={24} />
+            <div>
+              <p style={statLabelStyle}>{t.statsTotalReproductions}</p>
+              <h2 style={statValueStyle}>{stats.overview.total_reproductions}</h2>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '40px' }}>
+          <h3 style={{ marginBottom: '20px', fontSize: '1.1rem', color: '#444' }}>
+            {t.statsActivity}
+          </h3>
+          <div style={eventCountGridStyle}>
+            {stats.events_summary.map((ev) => (
+              <div key={ev.event_type} style={eventStatCardStyle}>
+                <div style={getIconContainerStyle(ev.event_type)}>
+                  {getEventIcon(ev.event_type)}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={statLabelStyle}>{ev.event_type.replace('_', ' ')}</p>
+                  <h2 style={{ ...statValueStyle, fontSize: '1.4rem' }}>{ev.total}</h2>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={cardStyle}>
+          <h3>{lang === 'es' ? 'Top 5 Canciones' : 'Top 5 Songs'}</h3>
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {stats.top_songs.map((song, index) => (
+              <li key={song.id} style={{ padding: '10px 0', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between' }}>
+                <span>{index + 1}. {song.name}</span>
+                <span style={{ fontWeight: 'bold' }}>{song.reproductions} 🎧</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        </>
+      )}
+
+      {view === 'songs' && (
         <>
           <div style={{ marginBottom: '20px', textAlign: 'right' }}>
             <button onClick={() => setShowAddForm(!showAddForm)} style={btnPrimary}>
@@ -231,7 +332,9 @@ const AdminDashboard = () => {
             />
           )}
         </>
-      ) : (
+      )} 
+
+      { view === 'users' && (
         <>
         {/* BUSCADOR DE USUARIOS */}
         <div style={{ marginBottom: '20px' }}>
@@ -355,6 +458,63 @@ const searchInputStyle = {
   outline: 'none',
   boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
   boxSizing: 'border-box'
+};
+
+const statsGridStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+  gap: '20px',
+  marginBottom: '40px'
+};
+
+const statCardStyle = {
+  background: '#fff',
+  padding: '20px',
+  borderRadius: '12px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '15px',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+  border: '1px solid #eee'
+};
+
+const statLabelStyle = {
+  margin: 0,
+  fontSize: '0.85rem',
+  color: '#666',
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px'
+};
+
+const statValueStyle = {
+  margin: 0,
+  fontSize: '1.8rem',
+  color: '#121212'
+};
+
+const eventCountGridStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+  gap: '15px'
+};
+
+const eventStatCardStyle = {
+  background: '#fff',
+  padding: '15px',
+  borderRadius: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+  border: '1px solid #f0f0f0'
+};
+
+const cardStyle = {
+  background: '#fff',
+  padding: '25px',
+  borderRadius: '12px',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+  border: '1px solid #eee',
+  marginTop: '20px'
 };
 
 export default AdminDashboard;
