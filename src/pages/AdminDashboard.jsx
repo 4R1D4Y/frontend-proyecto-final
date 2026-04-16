@@ -217,10 +217,10 @@ const AdminDashboard = () => {
           <div style={statCardStyle}>
             <Activity color="#1db954" size={24} />
             <div>
-              <p style={statLabelStyle}>{lang === 'es' ? 'Tiempo total escuchado' : 'Total listen time'}</p>
+              <p style={statLabelStyle}>{t.statsTotalTime}</p>
               <h2 style={statValueStyle}>
                 {/* Convertimos los segundos totales en horas y minutos */}
-                {Math.floor(stats.overview.total_listen_time / 3600)}h {Math.floor((stats.overview.total_listen_time % 3600) / 60)}m
+                {Math.floor(stats.overview.total_listen_time / 3600)}h {Math.floor((stats.overview.total_listen_time % 3600) / 60)}m 
               </h2>
             </div>
           </div>
