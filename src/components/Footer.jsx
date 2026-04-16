@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { footerTranslations } from '../lang/footerTranslations';
+import { trackEvent } from '../utils/analytics';
 
 const Footer = () => {
   const { lang } = useAuth();
@@ -12,12 +13,27 @@ const Footer = () => {
         
         {/* Sección de Redes Sociales */}
         <div style={socialSectionStyle}>
-            <a href="https://x.com/creo_music" target="_blank" rel="noreferrer" style={iconLinkStyle}>X</a>
-            <a href="https://www.youtube.com/@CreoMusic" target="_blank" rel="noreferrer" style={iconLinkStyle}>Youtube</a>
-            <a href="https://open.spotify.com/intl-es/artist/7oh6gwRCYhambO8qcKh3T1" target="_blank" rel="noreferrer" style={iconLinkStyle}>Spotify</a>
-            <a href="https://soundcloud.com/creo" target="_blank" rel="noreferrer" style={iconLinkStyle}>Sound Cloud</a>
-            <a href="https://creomusic.newgrounds.com/" target="_blank" rel="noreferrer" style={iconLinkStyle}>NewGrounds</a>
-            <a href="https://www.instagram.com/creoig/" target="_blank" rel="noreferrer" style={iconLinkStyle}>Instagram</a>
+            <a href="https://x.com/creo_music" target="_blank" rel="noreferrer" style={iconLinkStyle}
+              onClick={() => trackEvent('social_redirect', null, 1, { platform: 'X' })}
+            >X</a>
+            <a href="https://www.youtube.com/@CreoMusic" target="_blank" rel="noreferrer" style={iconLinkStyle}
+              onClick={() => trackEvent('social_redirect', null, 1, { platform: 'Youtube' })}
+            >Youtube</a>
+            <a href="https://open.spotify.com/intl-es/artist/7oh6gwRCYhambO8qcKh3T1" target="_blank" rel="noreferrer" style={iconLinkStyle}
+              onClick={() => trackEvent('social_redirect', null, 1, { platform: 'Spotify' })}
+            >Spotify</a>
+            <a href="https://soundcloud.com/creo" target="_blank" rel="noreferrer" style={iconLinkStyle}
+              onClick={() => trackEvent('social_redirect', null, 1, { platform: 'SoundCloud' })}
+            >Sound Cloud</a>
+            <a href="https://creomusic.newgrounds.com/" target="_blank" rel="noreferrer" style={iconLinkStyle}
+              onClick={() => trackEvent('social_redirect', null, 1, { platform: 'Newgrounds' })}
+            >Newgrounds</a>
+            <a href="https://www.instagram.com/creoig/" target="_blank" rel="noreferrer" style={iconLinkStyle}
+              onClick={() => trackEvent('social_redirect', null, 1, { platform: 'Instagram' })}
+            >Instagram</a>
+            <a href="https://creo.bandcamp.com/" target="_blank" rel="noreferrer" style={iconLinkStyle}
+              onClick={() => trackEvent('social_redirect', null, 1, { platform: 'Bandcamp' })}
+            >Bandcamp</a>
         </div>
 
         {/* Sección de Enlaces Legales */}

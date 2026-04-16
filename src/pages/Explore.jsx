@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import api from '../api/axios';
 import { ThumbsUp, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { exploreTranslations } from '../lang/exploreTranslations';
+import { trackEvent } from '../utils/analytics';
 
 const Explore = () => {
   const { user, lang } = useAuth();
@@ -11,9 +12,31 @@ const Explore = () => {
   const [currentSong, setCurrentSong] = useState(null);
   const t = exploreTranslations[lang];
   const [sort, setSort] = useState('oldest');
+  const audioRef = useRef(null);
+   const [lastTrackedTime, setLastTrackedTime] = useState(0);
 
   // URL base para las imágenes (definida en tu .env de React)
   // const storageUrl = import.meta.env.VITE_STORAGE_URL;
+
+  const handlePlay = () => {
+    // Guardamos el segundo exacto donde el usuario inicia/reanuda
+    setLastTrackedTime(audioRef.current.currentTime);
+  };
+
+  const handlePauseOrEnd = () => {
+    if (!audioRef.current) return;
+
+    // Calculamos la diferencia entre el segundo actual y cuando empezó a sonar
+    const currentTime = audioRef.current.currentTime;
+    const elapsed = Math.round(currentTime - lastTrackedTime);
+
+    // Solo enviamos al servidor si escuchó al menos 2 segundos (para evitar ruidos)
+    if (elapsed >= 2) {
+      trackEvent('playtime', currentSong.id, elapsed);
+      // Actualizamos la marca de tiempo por si vuelve a darle al play sin cambiar de canción
+      setLastTrackedTime(currentTime);
+    }
+  };
 
   const handleInteraction = async (songId, type) => {
     if (!user) return alert(t.interactions);
@@ -103,7 +126,9 @@ const Explore = () => {
                 }} 
             />
 
-            <h3 style={titleStyle}>{song.name}</h3>
+            <h3 style={titleStyle}
+              onClick={() => trackEvent('catalog_click', song.id, 1)}
+            >{song.name}</h3>
             
             <div style={infoStyle}>
               <span style={detailStyle}>{song.collection_name || 'Single'}</span>
@@ -149,7 +174,11 @@ const Explore = () => {
               </div>
 
               <audio 
+              ref={audioRef}
               autoPlay 
+              onPlay={handlePlay}
+              onPause={handlePauseOrEnd}
+              onEnded={handlePauseOrEnd}
               controls
               src={currentSong.audio_path} // Asumiendo que también viene la URL completa
               style={{ width: '40%' }}

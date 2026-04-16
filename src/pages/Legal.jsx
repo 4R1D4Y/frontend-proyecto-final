@@ -1,10 +1,22 @@
 import { useAuth } from '../context/AuthContext';
+import { useEffect, useRef } from 'react';
 import { legalTranslations } from "../lang/legalTranslations";
+import { trackEvent } from '../utils/analytics';
 
 const Legal = () => {
   const { lang } = useAuth();
 
   const t = legalTranslations[lang];
+
+  const hasTracked = useRef(false); // 2. Creamos la referencia
+
+  useEffect(() => {
+    // 3. Solo disparamos si no se ha hecho ya
+    if (!hasTracked.current) {
+      trackEvent('license_view', null, 1);
+      hasTracked.current = true; // Marcamos como hecho
+    }
+  }, []);
   
   return (
     <div style={containerStyle}>

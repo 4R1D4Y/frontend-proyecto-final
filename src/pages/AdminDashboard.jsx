@@ -213,6 +213,17 @@ const AdminDashboard = () => {
               <h2 style={statValueStyle}>{stats.overview.total_reproductions}</h2>
             </div>
           </div>
+          
+          <div style={statCardStyle}>
+            <Activity color="#1db954" size={24} />
+            <div>
+              <p style={statLabelStyle}>{lang === 'es' ? 'Tiempo total escuchado' : 'Total listen time'}</p>
+              <h2 style={statValueStyle}>
+                {/* Convertimos los segundos totales en horas y minutos */}
+                {Math.floor(stats.overview.total_listen_time / 3600)}h {Math.floor((stats.overview.total_listen_time % 3600) / 60)}m
+              </h2>
+            </div>
+          </div>
         </div>
 
         <div style={{ marginBottom: '40px' }}>
@@ -227,7 +238,8 @@ const AdminDashboard = () => {
                 </div>
                 <div style={{ flex: 1 }}>
                   <p style={statLabelStyle}>{ev.event_type.replace('_', ' ')}</p>
-                  <h2 style={{ ...statValueStyle, fontSize: '1.4rem' }}>{ev.total}</h2>
+                  <h2 style={{ ...statValueStyle, fontSize: '1.4rem' }}>
+                    {ev.total}</h2>
                 </div>
               </div>
             ))}
