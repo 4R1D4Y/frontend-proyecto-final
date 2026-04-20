@@ -139,7 +139,9 @@
 
 .card-stats-actions {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 20px;
 }
 
@@ -154,6 +156,23 @@
   font-size: 0.8rem;
   font-weight: bold;
   cursor: pointer;
+}
+
+.icon-btn {
+  background: none;      /* Quita el fondo gris */
+  border: none;          /* Quita el borde por defecto */
+  padding: 10px;            /* Quita el espacio interno */
+  cursor: pointer;       /* Mantiene la mano al pasar el ratón */
+  transition: transform 0.2s ease; /* Para que al clicar haga un pequeño efecto */
+  outline: none;         /* Quita el recuadro que sale al hacer clic */
+}
+
+.icon-btn:hover {
+  transform: scale(1.2); /* El icono crece un poco al pasar el ratón */
+}
+
+.icon-btn:active {
+  transform: scale(0.9); /* Efecto de pulsación al hacer clic */
 }
 
 /* Panel del Reproductor Derecho */
