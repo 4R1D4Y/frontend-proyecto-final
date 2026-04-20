@@ -39,7 +39,7 @@ const About = () => {
 
       {/* CANCIONES DESTACADAS (Visual) */}
       <section style={{marginTop: '50px'}}>
-        <h3 style={{textAlign: 'left'}}>{lang === 'es' ? 'Obras Emblemáticas' : 'Emblematic Works'}</h3>
+        <h3 style={{textAlign: 'left'}}>{t.emblematicWorks}</h3>
         <div style={featuredSongsStyle}>
           <div style={songItemStyle}>
              <img src="http://localhost:8000/storage/covers/dimension.jpg" style={smallCoverStyle} />

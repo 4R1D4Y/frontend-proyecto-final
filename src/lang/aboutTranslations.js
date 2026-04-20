@@ -8,6 +8,7 @@ export const aboutTranslations = {
     identity_title: "Identidad Sonora",
     identity_text: "Su música es una amalgama experimental: fusión orgánica de instrumentos de viento (saxofón) con sintetizadores pesados y una complejidad rítmica influenciada por el Dubstep y Electro House.",
     gd_impact: "Su impacto en Geometry Dash ha sido masivo, con himnos como 'Dimension', 'Nautilus' y 'Carnivores'.",
+    emblematicWorks: "Obras Emblemáticas",
     community_title: "Comunidad y Creadores",
     community_text: "Como artista independiente bajo su propio sello, permite el uso de su música a creadores de contenido siempre que se atribuya correctamente la autoría."
   },
@@ -20,6 +21,7 @@ export const aboutTranslations = {
     identity_title: "Sonorous Identity",
     identity_text: "His music is an experimental amalgam: an organic fusion of wind instruments (saxophone) with heavy synthesizers and a rhythmic complexity influenced by Dubstep and Electro House.",
     gd_impact: "His impact on Geometry Dash has been massive, with anthems like 'Dimension', 'Nautilus' and 'Carnivores'.",
+    emblematicWorks: "Emblematic Works",
     community_title: "Community and Creators",
     community_text: "As an independent artist under his own label, he allows content creators to use his music as long as proper attribution is given."
   }

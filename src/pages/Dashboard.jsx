@@ -33,7 +33,7 @@ const Dashboard = () => {
       // Esto te mostrará el mensaje real de Laravel (ej: "The email has already been taken")
       const errorMsg = err.response?.data?.errors?.email?.[0] 
                     || err.response?.data?.message 
-                    || 'Error de conexión';
+                    || t.connectionError;
       setMessage({ text: errorMsg, type: 'error' });
     }
   };
@@ -42,7 +42,7 @@ const Dashboard = () => {
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      return setMessage({ text: 'Las contraseñas no coinciden', type: 'error' });
+      return setMessage({ text: t.passwordMatchError, type: 'error' });
     }
     try {
       await api.put('/user/password', {
@@ -50,10 +50,10 @@ const Dashboard = () => {
         password: newPassword,
         password_confirmation: confirmPassword
       });
-      setMessage({ text: 'Contraseña actualizada', type: 'success' });
+      setMessage({ text: t.passwordChanged, type: 'success' });
       setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
     } catch (err) {
-      setMessage({ text: err.response?.data?.message || 'Error al actualizar contraseña', type: 'error' });
+      setMessage({ text: err.response?.data?.message || t.passwordChangeError, type: 'error' });
     }
   };
 
@@ -83,7 +83,7 @@ const Dashboard = () => {
             window.location.href = '/'; // Redirección forzada a la Home
         } catch (err) {
             setMessage({ 
-                text: err.response?.data?.message || 'Error al eliminar la cuenta', 
+                text: err.response?.data?.message || t.deleteAccountError, 
                 type: 'error' 
             });
         }

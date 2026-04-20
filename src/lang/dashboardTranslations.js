@@ -1,5 +1,10 @@
 export const dashBoardTranslations = {
     es: {
+        connectionError: "Error de conexión",
+        passwordMatchError: "Las contraseñas no coinciden",
+        passwordChanged: "Contraseña actualizada",
+        passwordChangeError: "Error al actualizar contraseña",
+        deleteAccountError: "Error al eliminar la cuenta",
         loading: "Cargando perfil...",
         title: "Mi Perfil",
         email: "E-mail:",
@@ -21,6 +26,11 @@ export const dashBoardTranslations = {
         confirmDeleteButtonCancel: "Cancelar"
     },
     en: {
+        connectionError: "Connection error",
+        passwordMatchError: "The passwords do not match",
+        passwordChanged: "Updated password",
+        passwordChangeError: "Error updating password",
+        deleteAccountError: "Error deleting account",
         loading: "Loading profile...",
         title: "My Profile",
         email: "E-mail:",
