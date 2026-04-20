@@ -1,0 +1,29 @@
+:root {
+  /* Colores */
+  --bg-gradient: linear-gradient(180deg, #2F32E6 0%, #000000 100%);
+  --color-card: #121212; /* O #1A1D23 según prefieras */
+  --color-text: #F8F9FA;
+  --color-btn: #000000;
+  --color-btn-hover: #1a1a1a;
+  --color-btn-active: #2F32E6; /* Usamos el azul del gradiente como activo */
+  
+  /* Fuentes */
+  --font-title: 'Montserrat', sans-serif; /* O 'Bebas Neue' si prefieres algo más condensado */
+  --font-body: 'Inter', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-gradient);
+  background-attachment: fixed; /* Para que el gradiente no se corte al hacer scroll */
+  color: var(--color-text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-title);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

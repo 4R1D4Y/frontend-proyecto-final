@@ -56,7 +56,7 @@ const Footer = () => {
 
 // --- ESTILOS ---
 const footerStyle = {
-  background: '#121212', // Fondo oscuro
+  background: '#1A1D23', // Fondo oscuro
   color: '#b3b3b3',
   padding: '80px 20px 90px 20px',
   marginTop: 'auto', // Empuja el footer al final si usas Flexbox en el layout

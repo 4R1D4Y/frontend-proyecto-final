@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+
+// import pages
 import Home from './pages/Home';
 import About from './pages/About';
 import Explore from './pages/Explore';
@@ -8,18 +10,25 @@ import Favorites from './pages/Favorites';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Legal from './pages/Legal';
+import NotFound from './pages/NotFound';
+
+// import components
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
-import NotFound from './pages/NotFound';
+
+// import contexts
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './context/ProtectedRoute';
+
+// import styles
+
 
 
 function App() {
   const { user, lang, changeLanguage } = useAuth();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'linear-gradient(180deg,rgba(47, 50, 230, 1) 0%, rgba(0, 0, 0, 1) 50%)' }}>
     <Router>
       {/* Mini Navbar para navegar mientras desarrollamos */}
       <nav style={navStyle}>
@@ -96,8 +105,8 @@ export default App;
 
 // Estilos rápidos para los botones de idioma
 const navStyle = { 
-  padding: '10px 20px', 
-  background: '#222', 
+  padding: '10px 30px', 
+  background: '#1A1D23', 
   color: 'white', 
   display: 'flex', 
   justifyContent: 'space-between', // Separa links de idiomas

@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { exploreTranslations } from '../lang/exploreTranslations';
 import { trackEvent } from '../utils/analytics';
 
+import '../styles/explore.css';
 
 const Explore = () => {
   const { user, lang } = useAuth();
@@ -113,27 +114,27 @@ useEffect(() => {
         
         {/* BOTONES DE FILTRADO */}
         <div style={filterContainerStyle}>
-          <button 
+          <button className={sort === 'oldest' ? 'btn-filter active' : 'btn-filter'}
             onClick={() => setSort('oldest')} 
-            style={sort === 'oldest' ? activeFilterStyle : filterBtnStyle}
+            // style={sort === 'oldest' ? activeFilterStyle : filterBtnStyle}
           >
             {t.filter1}
           </button>
-          <button 
+          <button className={sort === 'recent' ? 'btn-filter active' : 'btn-filter'}
             onClick={() => setSort('recent')} 
-            style={sort === 'recent' ? activeFilterStyle : filterBtnStyle}
+            // style={sort === 'recent' ? activeFilterStyle : filterBtnStyle}
           >
             {t.filter2}
           </button>
-          <button 
+          <button className={sort === 'reproductions' ? 'btn-filter active' : 'btn-filter'}
             onClick={() => setSort('reproductions')} 
-            style={sort === 'reproductions' ? activeFilterStyle : filterBtnStyle}
+            // style={sort === 'reproductions' ? activeFilterStyle : filterBtnStyle}
           >
             {t.filter3}
           </button>
-          <button 
+          <button className={sort === 'name_desc' ? 'btn-filter active' : 'btn-filter'}
             onClick={() => setSort('name_desc')} 
-            style={sort === 'name_desc' ? activeFilterStyle : filterBtnStyle}
+            // style={sort === 'name_desc' ? activeFilterStyle : filterBtnStyle}
           >
             {t.filter4}
           </button>
