@@ -1,3 +1,58 @@
+.explore-container {
+  display: flex;
+  gap: 30px;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* Columna de canciones */
+.songs-column {
+  flex: 1;
+  transition: all 0.3s ease;
+}
+.songs-column.with-player {
+  max-width: 65%; /* Deja espacio para el panel derecho */
+}
+
+/* Header Sticky (Título + Filtros) */
+.sticky-header {
+  position: sticky;
+  top: 80px; /* Ajusta según tu Navbar */
+  width: 100%; /* Ocupa todo el navegador */
+  background-color: #2F32E6; 
+  z-index: 1100;
+  padding: 20px 0;
+}
+
+.header-inner-content {
+  /* max-width: 1200px; Centra el texto dentro del bloque azul */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Opcional: Un pequeño difuminado abajo para que la transición al negro sea suave */
+.sticky-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -20px;
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(180deg, #2F32E6 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.explore-title {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.filter-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .btn-filter {
   background-color: var(--color-btn);
   color: #FFFFFF;
@@ -20,14 +75,114 @@
   font-weight: bold;
 }
 
-.song-card {
-  background: var(--color-card);
-  border-radius: 12px;
-  padding: 15px;
-  transition: transform 0.3s ease;
+/* Tarjeta Horizontal */
+.explore-main-content {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  gap: 30px;
 }
 
-.song-card:hover {
-  transform: translateY(-5px);
-  background: #1e1e1e;
+.horizontal-card {
+  display: flex;
+  background: var(--color-card);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 15px;
+  gap: 20px;
+  align-items: center;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.horizontal-card.playing {
+  border-color: var(--color-btn-active);
+  background: rgba(47, 50, 230, 0.1);
+}
+
+.horizontal-card:hover {
+  transform: translateX(10px);
+  border-color: #F8F9FA;
+  background: linear-gradient(180deg, #1a1a1a 0%, #3f42ff 100%);
+}
+
+.card-cover-md {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.card-main-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.card-type {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.card-stats-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-play-card {
+  align-self: flex-start;
+  margin-top: 10px;
+  background: var(--color-btn-active);
+  color: white;
+  border: none;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Panel del Reproductor Derecho */
+.side-player-panel {
+  width: 30%;
+  position: sticky;
+  top: 300px; /* Al aumentar este valor, la tarjeta baja y se ve más centrada */
+  height: fit-content; /* Importante para que el sticky no se rompa */
+  align-self: flex-start;
+}
+
+.side-player-card {
+  background: var(--color-card);
+  padding: 25px;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.side-player-cover {
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.custom-audio-player {
+  width: 100%;
+  margin-top: 20px;
+  filter: invert(100%) hue-rotate(180deg); /* Opcional: para que el player de browser sea oscuro */
 }
