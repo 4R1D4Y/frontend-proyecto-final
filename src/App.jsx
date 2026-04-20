@@ -10,6 +10,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Legal from './pages/Legal';
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
+import NotFound from './pages/NotFound';
 import { useAuth } from './context/AuthContext';
 
 
@@ -61,6 +62,9 @@ function App() {
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/legal" element={<Legal />} />
+
+          {/* RUTA NO ENCONTRADA - 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
