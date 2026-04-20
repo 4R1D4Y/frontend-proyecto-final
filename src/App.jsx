@@ -12,6 +12,7 @@ import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
 import NotFound from './pages/NotFound';
 import { useAuth } from './context/AuthContext';
+import ProtectedRoute from './context/ProtectedRoute';
 
 
 function App() {
@@ -58,9 +59,25 @@ function App() {
           <Route path="/explore" element={<Explore />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          {/* Ruta Protegida: Usuario Normal */}
+          <Route path="/dashboard" element={
+              <ProtectedRoute>
+                  <Dashboard />
+              </ProtectedRoute>
+          } />
+
+          <Route path="/favorites" element={
+              <ProtectedRoute>
+                  <Favorites />
+              </ProtectedRoute>
+          } />
+
+          {/* Ruta Protegida: SOLO ADMIN */}
+          <Route path="/admin" element={
+              <ProtectedRoute adminOnly={true}>
+                  <AdminDashboard />
+              </ProtectedRoute>
+          } />
           <Route path="/legal" element={<Legal />} />
 
           {/* RUTA NO ENCONTRADA - 404 */}
