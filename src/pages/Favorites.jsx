@@ -1,15 +1,55 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { Heart } from 'lucide-react';
 import { favoritesTranslations } from '../lang/favoritesTranslations';
+import { trackEvent } from '../utils/analytics';
 
 const Favorites = () => {
   const { user, lang } = useAuth();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSong, setCurrentSong] = useState(null);
+  const audioRef = useRef(null);
+  const [lastTrackedTime, setLastTrackedTime] = useState(0);
   const t = favoritesTranslations[lang];
+
+  const handlePlay = () => {
+    // Guardamos el segundo exacto donde el usuario inicia/reanuda
+    setLastTrackedTime(audioRef.current.currentTime);
+  };
+
+  const handlePauseOrEnd = () => {
+    if (!audioRef.current) return;
+
+    // Calculamos la diferencia entre el segundo actual y cuando empezó a sonar
+    const currentTime = audioRef.current.currentTime;
+    const elapsed = Math.round(currentTime - lastTrackedTime);
+
+    // Solo enviamos al servidor si escuchó al menos 2 segundos (para evitar ruidos)
+    if (elapsed >= 2) {
+      trackEvent('playtime', currentSong.id, elapsed);
+      // Actualizamos la marca de tiempo por si vuelve a darle al play sin cambiar de canción
+      setLastTrackedTime(currentTime);
+    }
+  };
+
+  const playNextSong = () => {
+    if (!currentSong) return;
+
+    // 1. Buscamos el índice de la canción que está sonando ahora
+    const currentIndex = favorites.findIndex(s => s.id === currentSong.id);
+
+    // 2. Calculamos el siguiente índice
+    // Si es la última canción, volverá a la primera (bucle)
+    const nextIndex = (currentIndex + 1) % favorites.length;
+
+    // 3. Cambiamos la canción actual
+    setCurrentSong(favorites[nextIndex]);
+    
+    // Opcional: Registrar evento de reproducción para la nueva canción
+    // trackEvent('playtime', favorites[nextIndex].id, 1);
+  };
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -73,7 +113,18 @@ const Favorites = () => {
         <div style={playerBarStyle}>
           <img src={currentSong.cover_path} style={{ width: '50px', borderRadius: '4px' }} alt="" />
           <p style={{ margin: 0, fontWeight: 'bold' }}>{currentSong.name}</p>
-          <audio autoPlay controls src={currentSong.audio_path} style={{ width: '40%' }} />
+          <audio
+            ref={audioRef} 
+            autoPlay
+            onPlay={handlePlay}
+            onPause={handlePauseOrEnd}
+            onEnded={() => {
+              handlePauseOrEnd(); // Registramos los segundos de la que acaba de terminar
+              playNextSong();     // Saltamos a la siguiente
+            }}
+            controls 
+            src={currentSong.audio_path} 
+            style={{ width: '40%' }} />
         </div>
       )}
     </div>

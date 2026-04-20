@@ -10,10 +10,10 @@ const Explore = () => {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSong, setCurrentSong] = useState(null);
-  const t = exploreTranslations[lang];
   const [sort, setSort] = useState('oldest');
   const audioRef = useRef(null);
-   const [lastTrackedTime, setLastTrackedTime] = useState(0);
+  const [lastTrackedTime, setLastTrackedTime] = useState(0);
+  const t = exploreTranslations[lang];
 
   // URL base para las imágenes (definida en tu .env de React)
   // const storageUrl = import.meta.env.VITE_STORAGE_URL;
@@ -60,6 +60,23 @@ const Explore = () => {
     } catch (error) {
       console.error(`Error en ${type}:`, error);
     }
+  };
+
+  const playNextSong = () => {
+    if (!currentSong) return;
+
+    // 1. Buscamos el índice de la canción que está sonando ahora
+    const currentIndex = songs.findIndex(s => s.id === currentSong.id);
+
+    // 2. Calculamos el siguiente índice
+    // Si es la última canción, volverá a la primera (bucle)
+    const nextIndex = (currentIndex + 1) % songs.length;
+
+    // 3. Cambiamos la canción actual
+    setCurrentSong(songs[nextIndex]);
+    
+    // Opcional: Registrar evento de reproducción para la nueva canción
+    // trackEvent('playtime', songs[nextIndex].id, 1);
   };
 
   useEffect(() => {
@@ -178,7 +195,10 @@ const Explore = () => {
               autoPlay 
               onPlay={handlePlay}
               onPause={handlePauseOrEnd}
-              onEnded={handlePauseOrEnd}
+              onEnded={() => {
+                handlePauseOrEnd(); // Registramos los segundos de la que acaba de terminar
+                playNextSong();     // Saltamos a la siguiente
+              }}
               controls
               src={currentSong.audio_path} // Asumiendo que también viene la URL completa
               style={{ width: '40%' }}
