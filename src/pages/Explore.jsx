@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { exploreTranslations } from '../lang/exploreTranslations';
 import { trackEvent } from '../utils/analytics';
 
+
 const Explore = () => {
   const { user, lang } = useAuth();
   const [songs, setSongs] = useState([]);
@@ -13,13 +14,19 @@ const Explore = () => {
   const [sort, setSort] = useState('oldest');
   const audioRef = useRef(null);
   const [lastTrackedTime, setLastTrackedTime] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
   const t = exploreTranslations[lang];
 
   // URL base para las imágenes (definida en tu .env de React)
   // const storageUrl = import.meta.env.VITE_STORAGE_URL;
 
   const handlePlay = () => {
-    // Guardamos el segundo exacto donde el usuario inicia/reanuda
+    // Si es la primera vez que suena esta canción desde que se seleccionó
+    if (!hasStarted) {
+        // Enviamos un valor especial o un evento diferente para contar la reproducción
+        trackEvent('playtime', currentSong.id, 0, { action: 'new_play' });
+        setHasStarted(true);
+    }
     setLastTrackedTime(audioRef.current.currentTime);
   };
 
@@ -92,6 +99,10 @@ const Explore = () => {
   };
   fetchSongs();
 }, [sort]);
+
+useEffect(() => {
+  setHasStarted(false);
+}, [currentSong]);
 
   if (loading) return <div style={{ padding: '20px' }}>{lang === 'es' ? 'Cargando biblioteca...' : 'Loading songs...'}</div>;
 

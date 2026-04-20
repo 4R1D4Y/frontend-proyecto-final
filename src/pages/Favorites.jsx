@@ -12,10 +12,16 @@ const Favorites = () => {
   const [currentSong, setCurrentSong] = useState(null);
   const audioRef = useRef(null);
   const [lastTrackedTime, setLastTrackedTime] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
   const t = favoritesTranslations[lang];
 
   const handlePlay = () => {
-    // Guardamos el segundo exacto donde el usuario inicia/reanuda
+    // Si es la primera vez que suena esta canción desde que se seleccionó
+    if (!hasStarted) {
+        // Enviamos un valor especial o un evento diferente para contar la reproducción
+        trackEvent('playtime', currentSong.id, 0, { action: 'new_play' });
+        setHasStarted(true);
+    }
     setLastTrackedTime(audioRef.current.currentTime);
   };
 
@@ -64,6 +70,10 @@ const Favorites = () => {
     };
     fetchFavorites();
   }, []);
+
+  useEffect(() => {
+    setHasStarted(false);
+  }, [currentSong]);
 
   const removeFavorite = async (songId) => {
     try {
