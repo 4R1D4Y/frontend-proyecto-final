@@ -4,6 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { registerTranslations } from '../lang/registerTranslations';
 
+import "../styles/auth.css";
+
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -42,42 +44,72 @@ const Register = () => {
   };
 
   return (
-    <div style={formContainerStyle}>
-      <h2>{t.title}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      
-      <form onSubmit={handleSubmit}>
-        {/* <div style={inputGroupStyle}>
-          <label>Nombre Completo:</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-        </div> */}
-        <div style={inputGroupStyle}>
-          <label>{t.email}</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </div>
-        <div style={inputGroupStyle}>
-          <label>{t.password}</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </div>
-        <div style={inputGroupStyle}>
-          <label>{t.confirm_password}</label>
-          <input type="password" value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} required />
-        </div>
+    <div className="auth-page-container">
+      <div className="auth-card">
+        <h2 className="auth-title">{t.title}</h2>
         
-        <p style={{ fontSize: '0.8rem' }}>
-          {t.accept_terms} <Link to="/legal">{t.terms}</Link>.
-        </p>
+        {error && <p className="auth-error-msg">{error}</p>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="auth-input-group">
+            <label>{t.email}</label>
+            <input 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              className="auth-input"
+              placeholder="example@mail.com"
+              required 
+            />
+          </div>
 
-        <button type="submit" style={btnStyle}>{t.register}</button>
-      </form>
-      <p>{t.account_exist} <Link to="/login">{t.login}</Link></p>
+          <div className="auth-input-group">
+            <label>{t.password}</label>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              className="auth-input"
+              placeholder="••••••••"
+              required 
+            />
+          </div>
+
+          <div className="auth-input-group">
+            <label>{t.confirm_password}</label>
+            <input 
+              type="password" 
+              value={passwordConfirmation} 
+              onChange={(e) => setPasswordConfirmation(e.target.value)} 
+              className="auth-input"
+              placeholder="••••••••"
+              required 
+            />
+          </div>
+
+          <p className="auth-terms-text">
+            {t.accept_terms} <Link to="/legal" className="auth-link">{t.terms}</Link>
+          </p>
+
+          <button type="submit" className="auth-submit-btn">
+            {t.register}
+          </button>
+        </form>
+
+        <p className="auth-footer-text">
+          {t.account_exist} {' '}
+          <Link to="/login" className="auth-link">
+            {t.login}
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
 
 // Estilos rápidos
-const formContainerStyle = { maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' };
-const inputGroupStyle = { marginBottom: '15px', display: 'flex', flexDirection: 'column' };
-const btnStyle = { width: '100%', padding: '10px', background: '#1db954', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' };
+// const formContainerStyle = { maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' };
+// const inputGroupStyle = { marginBottom: '15px', display: 'flex', flexDirection: 'column' };
+// const btnStyle = { width: '100%', padding: '10px', background: '#1db954', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' };
 
 export default Register;

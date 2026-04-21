@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { loginTranslations } from '../lang/loginTranslations';
+
+import '../styles/auth.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -43,31 +45,49 @@ const Login = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc' }}>
-      <h2>{t.title}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <label>{t.email}</label><br />
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-          />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label>{t.password}</label><br />
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-          />
-        </div>
-        <button type="submit">{t.enter}</button>
-      </form>
+    <div className="auth-page-container">
+      <div className="auth-card">
+        <h2 className="auth-title">{t.title}</h2>
+        
+        {error && <p className="auth-error-msg">{error}</p>}
+        
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="auth-input-group">
+            <label>{t.email}</label>
+            <input 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              className="auth-input"
+              placeholder="example@mail.com"
+              required 
+            />
+          </div>
+
+          <div className="auth-input-group">
+            <label>{t.password}</label>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              className="auth-input"
+              placeholder="••••••••"
+              required 
+            />
+          </div>
+
+          <button type="submit" className="auth-submit-btn">
+            {t.enter}
+          </button>
+        </form>
+
+        <p className="auth-footer-text">
+          {lang === 'es' ? '¿No tiene cuenta?' : "Don't have an account?"} {' '}
+          <Link to="/register" className="auth-link">
+            {lang === 'es' ? 'Regístrate' : 'Sign Up'}
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
