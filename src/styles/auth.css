@@ -103,3 +103,10 @@
 .auth-link:hover {
   text-decoration: underline;
 }
+
+.auth-terms-text {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: -10px; /* Reduce espacio con el input de arriba */
+  text-align: left;
+}
