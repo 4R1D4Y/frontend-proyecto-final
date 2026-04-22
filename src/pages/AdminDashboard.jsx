@@ -261,15 +261,27 @@ const AdminDashboard = () => {
       )}
 
       {view === 'songs' && (
-        <>
-          <div style={{ marginBottom: '20px', textAlign: 'right' }}>
-            <button onClick={() => setShowAddForm(!showAddForm)} style={btnPrimary}>
-              <Plus size={20} /> {showAddForm ? t.addSongButtonClose : t.addSongButtonOpen}
+        <div className="admin-songs-view">
+          {/* BARRA DE ACCIONES SUPERIOR */}
+          <div className="admin-actions-bar">
+            <div className="search-wrapper">
+              <MousePointerClick size={18} className="search-icon" />
+              <input
+                type="text"
+                placeholder={t.songSearchBar}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="admin-search-input"
+              />
+            </div>
+            <button onClick={() => setShowAddForm(!showAddForm)} className="btn-add-song">
+              {showAddForm ? <><EyeOff size={18} /> {t.addSongButtonClose}</> : <><Plus size={18} /> {t.addSongButtonOpen}</>}
             </button>
           </div>
-          {/* Formulario condicional */}
+
+          {/* FORMULARIO DE ADICIÓN (DROPDOWN) */}
           {showAddForm && (
-            <div style={formWrapper}>
+            <div className="admin-form-container">
               <AddSongForm 
                 allSongs={songs}
                 onSongAdded={() => { setShowAddForm(false); fetchData(); }} 
@@ -277,21 +289,11 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          <div style={{ marginBottom: '20px' }}>
-            <input
-              type="text"
-              placeholder={t.songSearchBar}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={searchInputStyle}
-            />
-          </div>
-
-          {/* Tabla de Gestión */}
-          <div style={tableContainer}>
-            <table style={tableStyle}>
+          {/* TABLA DE CANCIONES ESTILO FIGMA */}
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
               <thead>
-                <tr style={theadStyle}>
+                <tr>
                   <th>{t.songsColumnCover}</th>
                   <th>{t.songsColumnName}</th>
                   <th>{t.songsColumnType}</th>
@@ -303,27 +305,29 @@ const AdminDashboard = () => {
               </thead>
               <tbody>
                 {filteredSongs.map(song => (
-                  <tr key={song.id} style={trStyle}>
-                    <td><img src={song.cover_url} style={miniCover} alt="" /></td>
-                    <td><strong>{song.name}</strong></td>
-                    <td>{song.type.toUpperCase()}</td>
-                    <td>{song.collection_name}</td>
+                  <tr key={song.id}>
+                    <td><img src={song.cover_url} className="admin-mini-cover" alt="" /></td>
+                    <td><span className="song-name-cell">{song.name}</span></td>
+                    <td><span className="badge-type">{song.type}</span></td>
+                    <td><span className="collection-name-cell">{song.collection_name || '—'}</span></td>
                     <td>
-                      <span style={song.status === 'active' ? statusActive : statusHidden}>
+                      <span className={`badge-status ${song.status}`}>
                         {song.status}
                       </span>
                     </td>
-                    <td>{song.reproductions} 🎧</td>
-                    <td style={actionsCell}>
-                        <button onClick={() => setEditingSong(song)} style={btnAction}>
-                            <Edit size={18} color="blue" />
+                    <td><span className="repro-count">{song.reproductions.toLocaleString()} 🎧</span></td>
+                    <td>
+                      <div className="admin-actions-btns">
+                        <button onClick={() => setEditingSong(song)} className="btn-action edit" title={t.edit}>
+                          <Edit size={18} />
                         </button>  
-                        <button onClick={() => toggleStatus(song.id, song.status)} title="Ocultar/Mostrar" style={btnAction}>
-                            {song.status === 'active' ? <EyeOff size={18} /> : <Eye size={18} />}
+                        <button onClick={() => toggleStatus(song.id, song.status)} className="btn-action toggle" title="Ocultar/Mostrar">
+                          {song.status === 'active' ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
-                        <button onClick={() => handleDelete(song.id)} title="Eliminar" style={{...btnAction, color: 'red'}}>
-                            <Trash2 size={18} />
+                        <button onClick={() => handleDelete(song.id)} className="btn-action delete" title={t.delete}>
+                          <Trash2 size={18} />
                         </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -336,14 +340,11 @@ const AdminDashboard = () => {
             <EditSongForm 
               song={editingSong} 
               allSongs={songs}
-              onSongUpdated={() => { 
-                setEditingSong(null); 
-                fetchData(); 
-              }} 
+              onSongUpdated={() => { setEditingSong(null); fetchData(); }} 
               onCancel={() => setEditingSong(null)} 
             />
           )}
-        </>
+        </div>
       )} 
 
       { view === 'users' && (

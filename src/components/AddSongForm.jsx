@@ -100,87 +100,115 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} style={formGrid}>
-            <div style={inputGroup}>
-                <label>{t.inputName_t}</label>
-                <input type="text" required onChange={e => setFormData({...formData, name: e.target.value})} />
-            </div>
+        <form onSubmit={handleSubmit} className="admin-add-song-form">
+            <div className="form-grid">
+                {/* GRUPO: NOMBRE */}
+                <div className="admin-input-group">
+                    <label>{t.inputName_t}</label>
+                    <input 
+                        type="text" 
+                        className="admin-input"
+                        required 
+                        placeholder='Ej: Octane'
+                        onChange={e => setFormData({...formData, name: e.target.value})} 
+                    />
+                </div>
 
-            <div style={inputGroup}>
-                <label>{t.inputType_t}</label>
-                <select onChange={e => setFormData({...formData, type: e.target.value})}>
-                    <option value="single">Single</option>
-                    <option value="ep">EP</option>
-                    <option value="album">Album</option>
-                </select>
-            </div>
+                {/* GRUPO: TIPO */}
+                <div className="admin-input-group">
+                    <label>{t.inputType_t}</label>
+                    <select 
+                        className="admin-input"
+                        onChange={e => setFormData({...formData, type: e.target.value})}
+                    >
+                        <option value="single">Single</option>
+                        <option value="ep">EP</option>
+                        <option value="album">Album</option>
+                    </select>
+                </div>
 
-            {formData.type !== 'single' && (
-                <div style={collectionBoxStyle}>
-                    <div style={inputGroup}>
-                        <label>{t.inputCollectionName_t}</label>
-                        <input 
-                            type="text" 
-                            value={formData.collection_name}
-                            onChange={e => handleCollectionNameChange(e.target.value)} 
-                            placeholder="Ej: Adrenaline EP"
-                        />
+                {/* SECCIÓN DINÁMICA DE COLECCIÓN */}
+                {formData.type !== 'single' && (
+                    <div className="collection-fields-container">
+                        <div className="admin-input-group">
+                            <label>{t.inputCollectionName_t}</label>
+                            <input 
+                                type="text" 
+                                className="admin-input"
+                                value={formData.collection_name}
+                                onChange={e => handleCollectionNameChange(e.target.value)} 
+                                placeholder="Ej: Adrenaline EP"
+                            />
+                        </div>
+                        <div className="admin-input-group">
+                            <label>{t.collectionOrder}</label>
+                            <input 
+                                type="number" 
+                                className="admin-input"
+                                value={formData.collection_order}
+                                onChange={e => setFormData({...formData, collection_order: e.target.value})} 
+                            />
+                        </div>
                     </div>
-                    <div style={inputGroup}>
-                        <label>{t.collectionOrder}</label>
+                )}
+
+                {/* GRUPO: FECHA */}
+                <div className="admin-input-group">
+                    <label>{t.inputDate_t}</label>
+                    <input 
+                        type="date" 
+                        className="admin-input"
+                        required 
+                        onChange={e => setFormData({...formData, release_date: e.target.value})} 
+                    />
+                </div>
+
+                {/* GRUPO: DURACIÓN (Solo lectura) */}
+                <div className="admin-input-group">
+                    <label>{t.inputDuration_t}</label>
+                    <input 
+                        type="number" 
+                        className="admin-input readonly"
+                        value={formData.duration} 
+                        readOnly 
+                    />
+                </div>
+
+                {/* GRUPO: ARCHIVOS */}
+                <div className="admin-input-group">
+                    <label>{t.inputAudio_t}</label>
+                    <div className="file-input-wrapper">
                         <input 
-                            type="number" 
-                            value={formData.collection_order}
-                            onChange={e => setFormData({...formData, collection_order: e.target.value})} 
+                            type="file" 
+                            accept="audio/mp3,audio/wav,audio/x-m4a,audio/m4a" 
+                            required 
+                            onChange={handleAudioChange} 
                         />
                     </div>
                 </div>
-            )}
 
-            <div style={inputGroup}>
-                <label>{t.inputDate_t}</label>
-                <input type="date" required onChange={e => setFormData({...formData, release_date: e.target.value})} />
-            </div>
+                <div className="admin-input-group">
+                    <label>{t.inputCover_t}</label>
+                    <div className="file-input-wrapper">
+                        <input 
+                            type="file" 
+                            accept="image/*" 
+                            required 
+                            onChange={e => setCoverFile(e.target.files[0])} 
+                        />
+                    </div>
+                </div>
 
-            <div style={inputGroup}>
-                <label>{t.inputDuration_t}</label>
-                <input type="number" value={formData.duration} readOnly style={{ background: '#eee' }} />
-            </div>
-
-            <div style={inputGroup}>
-                <label>{t.inputAudio_t}</label>
-                <input type="file" accept="audio/mp3,audio/wav,audio/x-m4a,audio/m4a" required onChange={handleAudioChange} />
-            </div>
-
-            <div style={inputGroup}>
-                <label>{t.inputCover_t}</label>
-                <input type="file" accept="image/*" required onChange={e => setCoverFile(e.target.files[0])} />
-            </div>
-
-            <div style={{gridColumn: '1 / -1'}}>
-                <button type="submit" disabled={loading} style={btnSubmit}>
-                    {loading ? t.uploading : t.uploadingSave}
-                </button>
-                {error && <p style={{color: 'red', marginTop: '10px'}}>{error}</p>}
+                {/* BOTÓN Y ERRORES */}
+                <div className="form-actions-full">
+                    <button type="submit" disabled={loading} className="admin-submit-btn">
+                        {loading ? t.uploading : t.uploadingSave}
+                    </button>
+                    {error && <p className="admin-error-text">{error}</p>}
+                </div>
             </div>
         </form>
     );
-};
-
-// --- ESTILOS ---
-const formGrid = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' };
-const inputGroup = { display: 'flex', flexDirection: 'column', gap: '5px' };
-const btnSubmit = { padding: '12px', background: '#1db954', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginTop: '10px' };
-
-const collectionBoxStyle = {
-    gridColumn: '1 / -1', // Ocupa las dos columnas del grid
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '20px',
-    background: '#f0fdf4',
-    padding: '15px',
-    borderRadius: '8px',
-    border: '1px solid #1db954'
 };
 
 export default AddSongForm;

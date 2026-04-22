@@ -89,72 +89,99 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
 
     return (
         <>
-            {/* Fondo oscuro tras el panel para centrar la atención */}
-            <div style={overlayStyle} onClick={onCancel}></div>
+            {/* Fondo oscuro tras el panel */}
+            <div className="admin-drawer-overlay" onClick={onCancel}></div>
             
-            {/* Panel Lateral */}
-            <div style={drawerStyle}>
-                <div style={drawerHeader}>
+            {/* Panel Lateral Derecho */}
+            <div className="admin-drawer">
+                <div className="admin-drawer-header">
                     <h3>{t.title}</h3>
-                    <button onClick={onCancel} style={btnClose}>&times;</button>
+                    <button onClick={onCancel} className="btn-close-drawer">&times;</button>
                 </div>
 
-                <form onSubmit={handleSubmit} style={formStyle}>
-                    <div style={scrollContentStyle}>
-                        <label>{t.inputName_t}</label>
-                        <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={inputStyle} required />
+                <form onSubmit={handleSubmit} className="admin-drawer-form">
+                    <div className="admin-drawer-scroll-content">
+                        <div className="admin-input-group">
+                            <label>{t.inputName_t}</label>
+                            <input 
+                                type="text" 
+                                className="admin-input"
+                                value={formData.name} 
+                                onChange={e => setFormData({...formData, name: e.target.value})} 
+                                required 
+                            />
+                        </div>
                         
-                        <label>{t.inputType_t}</label>
-                        <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={inputStyle}>
-                            <option value="single">Single</option>
-                            <option value="ep">EP</option>
-                            <option value="album">Album</option>
-                        </select>
+                        <div className="admin-input-group">
+                            <label>{t.inputType_t}</label>
+                            <select 
+                                className="admin-input"
+                                value={formData.type} 
+                                onChange={e => setFormData({...formData, type: e.target.value})}
+                            >
+                                <option value="single">Single</option>
+                                <option value="ep">EP</option>
+                                <option value="album">Album</option>
+                            </select>
+                        </div>
 
                         {formData.type !== 'single' && (
-                            <div style={{ background: '#f0f7f2', padding: '10px', borderRadius: '5px', marginBottom: '15px' }}>
-                                <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{t.collectionName_t || 'Colección'}</label>
-                                <input 
-                                    type="text" 
-                                    value={formData.collection_name} 
-                                    onChange={e => handleCollectionNameChange(e.target.value)} 
-                                    style={inputStyle} 
-                                />
+                            <div className="collection-fields-container drawer-variant">
+                                <div className="admin-input-group">
+                                    <label>{t.inputCollectionName_t || 'Colección'}</label>
+                                    <input 
+                                        type="text" 
+                                        className="admin-input"
+                                        value={formData.collection_name} 
+                                        onChange={e => handleCollectionNameChange(e.target.value)} 
+                                    />
+                                </div>
                                 
-                                <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{t.collectionOrder_t || 'Orden'}</label>
-                                <input 
-                                    type="number" 
-                                    value={formData.collection_order} 
-                                    onChange={e => setFormData({...formData, collection_order: e.target.value})} 
-                                    style={inputStyle} 
-                                />
+                                <div className="admin-input-group">
+                                    <label>{t.collectionOrder || 'Orden'}</label>
+                                    <input 
+                                        type="number" 
+                                        className="admin-input"
+                                        value={formData.collection_order} 
+                                        onChange={e => setFormData({...formData, collection_order: e.target.value})} 
+                                    />
+                                </div>
                             </div>
                         )}
 
-                        <label>{t.inputDate_t}</label>
-                        <input type="date" value={formData.release_date} onChange={e => setFormData({...formData, release_date: e.target.value})} style={inputStyle} required />
+                        <div className="admin-input-group">
+                            <label>{t.inputDate_t}</label>
+                            <input 
+                                type="date" 
+                                className="admin-input"
+                                value={formData.release_date} 
+                                onChange={e => setFormData({...formData, release_date: e.target.value})} 
+                                required 
+                            />
+                        </div>
 
-                        <div style={fileBox}>
-                            <label>{t.inputAudio_t}</label>
+                        <div className="file-input-wrapper drawer-variant">
+                            <label className="admin-label-small">{t.inputAudio_t}</label>
                             <input type="file" accept="audio/*" onChange={handleAudioChange} />
-                            <p style={{fontSize: '0.7rem', color: '#1db954', marginTop: '5px'}}>
+                            <p className="duration-hint">
                                 {t.newDuration} {duration} {t.sec}.
                             </p>
                         </div>
 
-                        <div style={fileBox}>
-                            <label>{t.inputCover_t}</label>
+                        <div className="file-input-wrapper drawer-variant">
+                            <label className="admin-label-small">{t.inputCover_t}</label>
                             <input type="file" accept="image/*" onChange={e => setCoverFile(e.target.files[0])} />
                         </div>
-
-                        
                     </div>
-                    <div style={actionsContainer}>
-                            <button type="submit" disabled={loading} style={btnSave}>
-                                {loading ? t.loading : t.saveChanges}
-                            </button>
-                            <button type="button" onClick={onCancel} style={btnCancel}>{t.cancel}</button>
-                        </div>
+
+                    <div className="admin-drawer-actions">
+                        <button type="submit" disabled={loading} className="admin-submit-btn">
+                            {loading ? t.loading : t.saveChanges}
+                        </button>
+                        <button type="button" onClick={onCancel} className="admin-cancel-btn">
+                            {t.cancel}
+                        </button>
+                    </div>
                 </form>
             </div>
         </>
