@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import Swal from 'sweetalert2';
-import { Trash2, Edit, Plus, Users, Music, Eye, EyeOff, Activity, MousePointerClick, ExternalLink, FileText } from 'lucide-react';
+import { Trash2, Clock, Edit, Plus, Users, Music, Eye, EyeOff, Activity, MousePointerClick, ExternalLink, FileText } from 'lucide-react';
 import AddSongForm from '../components/AddSongForm';
 import EditSongForm from '../components/EditSongForm';
 import { adminDashboardTranslations } from '../lang/adminDashboardTranslations';
+
+import "../styles/adminDashboard.css";
 
 const AdminDashboard = () => {
   const [songs, setSongs] = useState([]);
@@ -172,92 +174,90 @@ const AdminDashboard = () => {
   if (loading) return <p style={{ padding: '20px' }}>{t.loading}</p>;
 
   return (
-    <div style={adminContainer}>
-      <header style={adminHeader}>
-        <h1>{t.title}</h1>
-        {/* BOTONES DE PESTAÑA */}
-        <button onClick={() => setView('stats')} style={view === 'stats' ? btnNavActive : btnNav}>
-          <Activity size={18} /> {t.statsTab}
-        </button>
-        <button onClick={() => setView('songs')} style={view === 'songs' ? btnNavActive : btnNav}>
-          <Music size={18} /> {t.songsTab}
-        </button>
-        <button onClick={() => setView('users')} style={view === 'users' ? btnNavActive : btnNav}>
-          <Users size={18} /> {t.usersTab}
-        </button>
+    <div className="admin-container">
+      {/* HEADER SEGÚN FIGMA: TÍTULO IZQUIERDA + TABS AL LADO */}
+      <header className="admin-header">
+        <h2 className="page-title">{t.title}</h2>
+        <nav className="admin-tabs">
+          <button className={`tab-btn ${view === 'stats' ? 'active' : ''}`} onClick={() => setView('stats')}>
+            <Activity size={18} /> {t.statsTab}
+          </button>
+          <button className={`tab-btn ${view === 'songs' ? 'active' : ''}`} onClick={() => setView('songs')}>
+            <Music size={18} /> {t.songsTab}
+          </button>
+          <button className={`tab-btn ${view === 'users' ? 'active' : ''}`} onClick={() => setView('users')}>
+            <Users size={18} /> {t.usersTab}
+          </button>
+        </nav>
       </header>
 
-      {view === 'stats' && (
-        <>
-        <div style={statsGridStyle}>
-          <div style={statCardStyle}>
-            <Users color="#1db954" size={24} />
-            <div>
-              <p style={statLabelStyle}>{t.statsTotalUsers}</p>
-              <h2 style={statValueStyle}>{stats.overview.total_users}</h2>
+      {/* --- VISTA ESTADÍSTICAS --- */}
+      {view === 'stats' && stats && (
+        <div className="stats-view">
+          {/* TARJETAS PRINCIPALES */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <Users className="stat-icon blue" />
+              <div className="stat-info">
+                <p>{t.statsTotalUsers}</p>
+                <h3>{stats.overview.total_users}</h3>
+              </div>
+            </div>
+            <div className="stat-card">
+              <Music className="stat-icon green" />
+              <div className="stat-info">
+                <p>{t.statsTotalSongs}</p>
+                <h3>{stats.overview.total_songs}</h3>
+              </div>
+            </div>
+            <div className="stat-card">
+              <Activity className="stat-icon purple" />
+              <div className="stat-info">
+                <p>{t.statsTotalReproductions}</p>
+                <h3>{stats.overview.total_reproductions}</h3>
+              </div>
+            </div>
+            <div className="stat-card">
+              <Clock className="stat-icon orange" />
+              <div className="stat-info">
+                <p>{t.statsTotalTime}</p>
+                <h3>
+                  {Math.floor(stats.overview.total_listen_time / 3600)}h {Math.floor((stats.overview.total_listen_time % 3600) / 60)}m
+                </h3>
+              </div>
             </div>
           </div>
 
-          <div style={statCardStyle}>
-            <Music color="#1db954" size={24} />
-            <div>
-              <p style={statLabelStyle}>{t.statsTotalSongs}</p>
-              <h2 style={statValueStyle}>{stats.overview.total_songs}</h2>
-            </div>
-          </div>
-
-          <div style={statCardStyle}>
-            <Activity color="#1db954" size={24} />
-            <div>
-              <p style={statLabelStyle}>{t.statsTotalReproductions}</p>
-              <h2 style={statValueStyle}>{stats.overview.total_reproductions}</h2>
-            </div>
-          </div>
-          
-          <div style={statCardStyle}>
-            <Activity color="#1db954" size={24} />
-            <div>
-              <p style={statLabelStyle}>{t.statsTotalTime}</p>
-              <h2 style={statValueStyle}>
-                {/* Convertimos los segundos totales en horas y minutos */}
-                {Math.floor(stats.overview.total_listen_time / 3600)}h {Math.floor((stats.overview.total_listen_time % 3600) / 60)}m 
-              </h2>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ marginBottom: '40px' }}>
-          <h3 style={{ marginBottom: '20px', fontSize: '1.1rem', color: '#444' }}>
-            {t.statsActivity}
-          </h3>
-          <div style={eventCountGridStyle}>
+          {/* DISTRIBUCIÓN DE ACTIVIDAD DETALLADA */}
+          <h3 className="admin-section-title">{t.statsActivity}</h3>
+          <div className="events-grid">
             {stats.events_summary.map((ev) => (
-              <div key={ev.event_type} style={eventStatCardStyle}>
+              <div key={ev.event_type} className="event-mini-card">
                 <div style={getIconContainerStyle(ev.event_type)}>
                   {getEventIcon(ev.event_type)}
                 </div>
-                <div style={{ flex: 1 }}>
-                  <p style={statLabelStyle}>{ev.event_type.replace('_', ' ')}</p>
-                  <h2 style={{ ...statValueStyle, fontSize: '1.4rem' }}>
-                    {ev.total}</h2>
+                <div className="event-mini-info">
+                  <p>{ev.event_type.replace('_', ' ').toUpperCase()}</p>
+                  <strong>{ev.total}</strong>
                 </div>
               </div>
             ))}
           </div>
-        </div>
 
-        <div style={cardStyle}>
-          <h3>{lang === 'es' ? 'Top 5 Canciones' : 'Top 5 Songs'}</h3>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {stats.top_songs.map((song, index) => (
-              <li key={song.id} style={{ padding: '10px 0', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between' }}>
-                <span>{index + 1}. {song.name}</span>
-                <span style={{ fontWeight: 'bold' }}>{song.reproductions} 🎧</span>
-              </li>
-            ))}
-          </ul>
+          {/* TOP 5 CANCIONES */}
+          <div className="top-songs-card">
+            <h3>{lang === 'es' ? 'Canciones más escuchadas' : 'Most Played Songs'}</h3>
+            <div className="top-list">
+              {stats.top_songs.map((song, index) => (
+                <div key={song.id} className="top-item">
+                  <span className="top-rank">#{index + 1}</span>
+                  <span className="top-name">{song.name}</span>
+                  <span className="top-value">{song.reproductions} 🎧</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        </>
       )}
 
       {view === 'songs' && (
