@@ -487,3 +487,63 @@
 .admin-cancel-btn:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* Específicos para la vista de Usuarios */
+.user-id-cell {
+  color: rgba(255, 255, 255, 0.3);
+  font-family: monospace;
+}
+
+.user-email-cell {
+  color: white;
+  font-weight: 500;
+}
+
+.status-cell-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.suspension-date {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+/* Selector de estado personalizado */
+.admin-status-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.admin-status-select:focus {
+  border-color: var(--color-accent);
+}
+
+.admin-status-select option {
+  background-color: #1A1D23; /* Fondo oscuro para que coincida con el tema */
+  color: white;
+}
+
+.admin-badge-protected {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.admin-badge-protected::before {
+  content: '🛡️';
+  font-size: 0.9rem;
+}

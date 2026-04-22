@@ -347,187 +347,76 @@ const AdminDashboard = () => {
         </div>
       )} 
 
-      { view === 'users' && (
-        <>
-        {/* BUSCADOR DE USUARIOS */}
-        <div style={{ marginBottom: '20px' }}>
-          <input
-            type="text"
-            placeholder={t.userSearchBar}
-            value={searchUser}
-            onChange={(e) => setSearchUser(e.target.value)}
-            style={searchInputStyle} // Reutilizamos el estilo del buscador de canciones
-          />
-        </div>
+      {view === 'users' && (
+        <div className="admin-users-view">
+          {/* BUSCADOR DE USUARIOS */}
+          <div className="admin-actions-bar">
+            <div className="search-wrapper">
+              <Users size={18} className="search-icon" />
+              <input
+                type="text"
+                placeholder={t.userSearchBar}
+                value={searchUser}
+                onChange={(e) => setSearchUser(e.target.value)}
+                className="admin-search-input"
+              />
+            </div>
+          </div>
 
-        {/* TABLA DE USUARIOS */}
-        <div style={tableContainer}>
-          <table style={tableStyle}>
-            <thead>
-              <tr style={theadStyle}>
-                <th>{t.usersColumnId}</th>
-                {/* <th>Nombre</th> */}
-                <th>{t.usersColumnEmail}</th>
-                <th>{t.usersColumnRole}</th>
-                <th>{t.usersColumnStatus}</th>
-                <th>{t.usersColumnActions}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map(u => (
-                <tr key={u.id} style={trStyle}>
-                  <td>{u.id}</td>
-                  {/* <td><strong>{u.name}</strong></td> */}
-                  <td>{u.email}</td>
-                  <td>{u.role.toUpperCase()}</td>
-                  <td>
-                    <span style={u.status === 'active' ? statusActive : statusHidden}>
-                      {u.status.toUpperCase()}
-                    </span>
-                  </td>
-                  <td>
-                    {u.role !== 'admin' ? (
-                      <select 
-                        value={u.status} 
-                        onChange={(e) => handleUserStatus(u, e.target.value)}
-                        style={selectStyle}
-                      >
-                        <option value="active">{t.usersActionActive}</option>
-                        <option value="suspended">{t.usersActionSuspend}</option>
-                        <option value="blocked">{t.usersActionBlock}</option>
-                      </select>
-                    ) : (
-                      <span style={{ fontSize: '0.8rem', color: '#999' }}>{t.usersAdmin}</span>
-                    )}
-                  </td>
-                  <td>
-                    <span style={u.status === 'active' ? statusActive : statusHidden}>
-                      {u.status.toUpperCase()}
-                    </span>
-                    {u.status === 'suspended' && u.suspension_time && (
-                      <div style={{ fontSize: '0.7rem', color: '#888' }}>
-                        Hasta: {new Date(u.suspension_time).toLocaleString()}
-                      </div>
-                    )}
-                  </td>
+          {/* TABLA DE USUARIOS ESTILO FIGMA */}
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>{t.usersColumnId}</th>
+                  <th>{t.usersColumnEmail}</th>
+                  <th>{t.usersColumnRole}</th>
+                  <th>{t.usersColumnStatus}</th>
+                  <th>{t.usersColumnActions}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredUsers.map(u => (
+                  <tr key={u.id}>
+                    <td><span className="user-id-cell">#{u.id}</span></td>
+                    <td><span className="user-email-cell">{u.email}</span></td>
+                    <td><span className="badge-type">{u.role}</span></td>
+                    <td>
+                      <div className="status-cell-wrapper">
+                        <span className={`badge-status ${u.status}`}>
+                          {u.status.toUpperCase()}
+                        </span>
+                        {u.status === 'suspended' && u.suspension_time && (
+                          <p className="suspension-date">
+                            {new Date(u.suspension_time).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                          </p>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      {u.role !== 'admin' ? (
+                        <select 
+                          value={u.status} 
+                          onChange={(e) => handleUserStatus(u, e.target.value)}
+                          className="admin-status-select"
+                        >
+                          <option value="active">{t.usersActionActive}</option>
+                          <option value="suspended">{t.usersActionSuspend}</option>
+                          <option value="blocked">{t.usersActionBlock}</option>
+                        </select>
+                      ) : (
+                        <span className="admin-badge-protected">{t.usersAdmin}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-        </>
       )}
     </div>
   );
-};
-
-// --- ESTILOS ---
-const adminContainer = { padding: '40px', maxWidth: '1200px', margin: '0 auto' };
-const adminHeader = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' };
-const btnPrimary = { background: '#1db954', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '25px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' };
-const tableContainer = { background: 'white', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', overflow: 'hidden' };
-const tableStyle = { width: '100%', borderCollapse: 'collapse' };
-const theadStyle = { background: '#f8f9fa', textAlign: 'left', borderBottom: '2px solid #eee' };
-const trStyle = { borderBottom: '1px solid #eee' };
-const miniCover = { width: '45px', height: '45px', borderRadius: '4px', objectFit: 'cover' };
-const actionsCell = { display: 'flex', gap: '10px' };
-const btnAction = { background: 'none', border: 'none', cursor: 'pointer', color: '#555' };
-const statusActive = { color: '#1db954', fontWeight: 'bold', fontSize: '0.8rem' };
-const statusHidden = { color: '#999', fontWeight: 'bold', fontSize: '0.8rem' };
-const formWrapper = { marginBottom: '30px', padding: '20px', border: '1px solid #ddd', borderRadius: '12px', background: '#fdfdfd' };
-
-const btnNav = {
-  background: '#282828',
-  color: 'white',
-  border: 'none',
-  padding: '10px 20px',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  transition: '0.3s'
-};
-
-const btnNavActive = {
-  ...btnNav,
-  background: '#1db954',
-  fontWeight: 'bold'
-};
-
-const selectStyle = {
-  padding: '5px',
-  borderRadius: '4px',
-  border: '1px solid #ccc',
-  cursor: 'pointer'
-};
-
-const searchInputStyle = {
-  width: '100%',
-  padding: '12px 20px',
-  borderRadius: '8px',
-  border: '1px solid #ddd',
-  fontSize: '1rem',
-  outline: 'none',
-  boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
-  boxSizing: 'border-box'
-};
-
-const statsGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-  gap: '20px',
-  marginBottom: '40px'
-};
-
-const statCardStyle = {
-  background: '#fff',
-  padding: '20px',
-  borderRadius: '12px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '15px',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-  border: '1px solid #eee'
-};
-
-const statLabelStyle = {
-  margin: 0,
-  fontSize: '0.85rem',
-  color: '#666',
-  textTransform: 'uppercase',
-  letterSpacing: '0.5px'
-};
-
-const statValueStyle = {
-  margin: 0,
-  fontSize: '1.8rem',
-  color: '#121212'
-};
-
-const eventCountGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-  gap: '15px'
-};
-
-const eventStatCardStyle = {
-  background: '#fff',
-  padding: '15px',
-  borderRadius: '10px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-  border: '1px solid #f0f0f0'
-};
-
-const cardStyle = {
-  background: '#fff',
-  padding: '25px',
-  borderRadius: '12px',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-  border: '1px solid #eee',
-  marginTop: '20px'
 };
 
 export default AdminDashboard;
