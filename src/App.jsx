@@ -13,6 +13,7 @@ import Legal from './pages/Legal';
 import NotFound from './pages/NotFound';
 
 // import components
+import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
 
@@ -30,36 +31,7 @@ function App() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'linear-gradient(180deg,rgba(47, 50, 230, 1) 0%, rgba(0, 0, 0, 1) 50%)' }}>
     <Router>
-      {/* Mini Navbar para navegar mientras desarrollamos */}
-      <nav style={navStyle}>
-        <h3>Creo Music</h3>
-        <Link to="/" style={{ color: 'white' }}>{lang === 'es' ? 'Inicio' : 'Home'}</Link>
-        <Link to="/about" style={{ color: 'white' }}>{lang === 'es' ? 'Sobre Creo' : 'About Creo'}</Link>
-        <Link to="/explore" style={{ color: 'white' }}>{lang === 'es' ? 'Explorar' : 'Explore'}</Link>
-        {!user ? (
-          <>
-          <Link to="/login" style={{ color: 'white' }}>{lang === 'es' ? 'Logearse' : 'Login'}</Link>
-          <Link to="/register" style={{ color: 'white' }}>{lang === 'es' ? 'Registrarse' : 'Register'}</Link>
-          </>
-        ) : (
-          <>
-            <Link to="/favorites" style={linkStyle}>{lang === 'es' ? 'Favoritos' : 'Favorites'}</Link>
-            <Link to="/dashboard" style={linkStyle}>{lang === 'es' ? 'Mi Perfil' : 'My Profile'}</Link>
-            {user.role === 'admin' &&
-              <Link to="/admin" style={linkStyle}>{lang === 'es' ? 'Admin' : 'Admin'}</Link>
-            }
-          </>
-         )}
-
-        <div style={langDivStyle}>
-          <span style={{ fontSize: '0.8rem', color: '#ccc' }}>{lang === 'es' ? 'Idioma' : 'Language'}:</span>
-          {lang === 'es' ? (
-            <button onClick={() => changeLanguage('en')} style={langBtnStyle}>EN</button>
-          ) : (
-            <button onClick={() => changeLanguage('es')} style={langBtnStyle}>ES</button>
-          )}
-        </div>
-      </nav>
+      <Navbar />
 
       <main style={{ flex: 1 }}>
         <Routes>
@@ -102,36 +74,3 @@ function App() {
 }
 
 export default App;
-
-// Estilos rápidos para los botones de idioma
-const navStyle = { 
-  padding: '10px 30px', 
-  background: '#1A1D23', 
-  color: 'white', 
-  display: 'flex', 
-  justifyContent: 'space-between', // Separa links de idiomas
-  alignItems: 'center',
-  position: 'sticky',
-  top: 0,
-  zIndex: 1100, // Mayor que el reproductor y las fotos
-  boxShadow: '0 2px 10px rgba(0,0,0,0.5)' // Opcional: para que se vea sombra al bajar
-
-};
-
-const linkStyle = { color: 'white', textDecoration: 'none' };
-
-const langBtnStyle = {
-  background: 'transparent',
-  border: '1px solid #555',
-  color: 'white',
-  padding: '2px 8px',
-  cursor: 'pointer',
-  fontSize: '0.7rem',
-  borderRadius: '4px'
-};
-
-const langDivStyle = {
-  display: 'flex',
-  gap: '10px',
-  alignItems: 'center',
-}

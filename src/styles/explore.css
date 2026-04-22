@@ -17,7 +17,7 @@
 /* Header Sticky (Título + Filtros) */
 .sticky-header {
   position: sticky;
-  top: 80px; /* Ajusta según tu Navbar */
+  top: 70px; /* Ajusta según tu Navbar */
   width: 100%; /* Ocupa todo el navegador */
   background-color: #2F32E6; 
   z-index: 1100;
