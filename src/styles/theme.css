@@ -1,29 +1,122 @@
+/* src/styles/theme.css */
+
 :root {
-  /* Colores */
-  --bg-gradient: linear-gradient(180deg, #2F32E6 0%, #000000 100%);
-  --color-card: #121212; /* O #1A1D23 según prefieras */
-  --color-text: #F8F9FA;
-  --color-btn: #000000;
-  --color-btn-hover: #1a1a1a;
-  --color-btn-active: #1db954; /* Usamos el azul del gradiente como activo */
+  /* --- PALETA DE COLORES FIGMA --- */
+  --bg-blue: #2F32E6;
+  --bg-black: #000000;
+  --bg-gradient: linear-gradient(180deg, var(--bg-blue) 0%, var(--bg-black) 100%);
   
-  /* Fuentes */
-  --font-title: 'Montserrat', sans-serif; /* O 'Bebas Neue' si prefieres algo más condensado */
-  --font-body: 'Inter', sans-serif;
+  /* Tarjetas y Contenedores */
+  --color-card: #181A20;            /* Gris carbón sólido para tarjetas */
+  --color-card-hover: #22252D;      /* Gris ligeramente más claro para hover */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  
+  /* Textos */
+  --color-text: #F8F9FA;            /* Blanco suave para no cansar la vista */
+  --color-text-muted: rgba(248, 249, 250, 0.6);
+  
+  /* Elementos de Acción (Azul Eléctrico) */
+  --color-accent: #2F32E6;          
+  --color-btn-active: #2F32E6;
+  --color-btn-hover: rgba(47, 50, 230, 0.8);
+  
+  /* Estados Especiales */
+  --color-success: #1db954;         /* Verde solo para mensajes de éxito */
+  --color-danger: #ff4d4d;          /* Rojo para eliminar/bloquear/errores */
+  --color-warning: #ffA500;         /* Naranja para suspensiones */
+
+  /* --- TIPOGRAFÍAS --- */
+  --font-title: 'Montserrat', sans-serif; /* Extra Bold en Títulos */
+  --font-body: 'Inter', sans-serif;       /* Regular/Medium en cuerpo */
 }
 
+/* --- RESET & ESTILOS BASE --- */
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg-gradient);
-  background-attachment: fixed; /* Para que el gradiente no se corte al hacer scroll */
+  min-height: 100vh;
+  /* El gradiente se queda fijo para que el contenido "deslice" sobre él */
+  background: var(--bg-gradient) no-repeat fixed;
   color: var(--color-text);
   font-family: var(--font-body);
-  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 {
+/* --- TÍTULOS GLOBALES (A la izquierda) --- */
+.page-title {
+  text-align: left;
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 3rem;
+  color: #FFFFFF;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+h1, h2, h3, h4 {
   font-family: var(--font-title);
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+/* --- COMPONENTES GENÉRICOS --- */
+
+/* Badge para tipos de canciones o roles */
+.badge-type {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+/* Inputs Oscuros Estilizados */
+.admin-input, .auth-input, .dash-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 12px;
+  color: #FFFFFF !important;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.admin-input:focus, .auth-input:focus {
+  border-color: var(--color-accent);
+}
+
+/* Botones Principales */
+.btn-primary-white {
+  background-color: #FFFFFF;
+  color: #000000;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+  transition: transform 0.2s ease;
+}
+
+.btn-primary-white:hover {
+  transform: scale(1.05);
+}
+
+/* --- SCROLLBAR PERSONALIZADA --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-card-hover);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
 }

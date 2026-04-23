@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
-import { Heart } from 'lucide-react';
+import { Heart, ThumbsUp, Play, Clock, Calendar } from 'lucide-react';
 import { favoritesTranslations } from '../lang/favoritesTranslations';
 import { trackEvent } from '../utils/analytics';
+
+import "../styles/favorites.css";
 
 const Favorites = () => {
   const { user, lang } = useAuth();
@@ -57,6 +59,12 @@ const Favorites = () => {
     // trackEvent('playtime', favorites[nextIndex].id, 1);
   };
 
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
@@ -88,66 +96,84 @@ const Favorites = () => {
   if (loading) return <div style={{ padding: '20px' }}>{t.loading}</div>;
 
   return (
-    <div style={{ padding: '20px', paddingBottom: '100px' }}>
-      <h2>{t.title} ❤️</h2>
-      
-      {favorites.length === 0 ? (
-        <p>{t.no_songs}</p>
-      ) : (
-        <div style={gridStyle}>
-          {favorites.map(song => (
-            <div key={song.id} style={cardStyle}>
-              {/* Nota: Tu controlador devuelve 'cover' en lugar de 'cover_path' */}
-              <img src={song.cover_path} alt={song.name} style={coverStyle} />
-              <h3 style={titleStyle}>{song.name}</h3>
-              <p style={{ fontSize: '0.8rem', color: '#666' }}>{t.date_saved} {new Date(song.saved_date).toLocaleDateString()}</p>
-              
-              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                <button onClick={() => removeFavorite(song.id)} style={iconBtnStyle}>
-                  <Heart size={20} fill="#1db954" color="#1db954" />
-                </button>
-                <button 
-                  style={playBtnStyle} 
-                  onClick={() => setCurrentSong({ ...song, audio_path: song.audio_path, cover_path: song.cover_path })}
-                >
-                    ▶ {t.replay}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="favorites-page-wrapper">
+      <h1 className="page-title">{t.title}</h1>
 
-      {/* Reproductor compartido */}
-      {currentSong && (
-        <div style={playerBarStyle}>
-          <img src={currentSong.cover_path} style={{ width: '50px', borderRadius: '4px' }} alt="" />
-          <p style={{ margin: 0, fontWeight: 'bold' }}>{currentSong.name}</p>
-          <audio
-            ref={audioRef} 
-            autoPlay
-            onPlay={handlePlay}
-            onPause={handlePauseOrEnd}
-            onEnded={() => {
-              handlePauseOrEnd(); // Registramos los segundos de la que acaba de terminar
-              playNextSong();     // Saltamos a la siguiente
-            }}
-            controls 
-            src={currentSong.audio_path} 
-            style={{ width: '40%' }} />
+      <div className="favorites-main-content">
+        {/* COLUMNA IZQUIERDA: TABLA */}
+        <div className={`favorites-column ${currentSong ? 'with-player' : ''}`}>
+          {favorites.length === 0 ? (
+            <p className="no-favorites-msg">{t.no_songs}</p>
+          ) : (
+            <div className="admin-table-wrapper"> {/* Reutilizamos estructura de Admin */}
+              <table className="admin-table favorites-table">
+                <thead>
+                  <tr>
+                    <th>{t.songsColumnCover || '#'}</th>
+                    <th>{t.songsColumnName || 'Nombre'}</th>
+                    <th>{t.songsColumnType || 'Tipo'}</th>
+                    <th><Calendar size={14} /> {t.date_saved || 'Guardado'}</th>
+                    <th><Clock size={14} /></th>
+                    <th>{t.songsColumnActions || 'Acciones'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {favorites.map(song => (
+                    <tr key={song.id} className={currentSong?.id === song.id ? 'active-row' : ''}>
+                      <td><img src={song.cover_path} className="admin-mini-cover" alt="" /></td>
+                      <td><span className="song-name-cell">{song.name}</span></td>
+                      <td><span className="badge-type">{song.collection_name || 'Single'}</span></td>
+                      <td className="fav-date-cell">{new Date(song.saved_date).toLocaleDateString()}</td>
+                      <td className="fav-duration-cell">{formatDuration(song.duration)}</td>
+                      <td>
+                        <div className="admin-actions-btns">
+                          {/* BOTÓN LIKE (Placeholder visual ya que no tienes la función de quitar like aquí aún) */}
+                          <button className="btn-action"><ThumbsUp size={18} color="#b3b3b3" /></button>
+                          
+                          {/* BOTÓN FAVORITO (Quitar) */}
+                          <button onClick={() => removeFavorite(song.id)} className="btn-action delete">
+                            <Heart size={18} fill="var(--color-accent)" color="var(--color-accent)" />
+                          </button>
+
+                          {/* BOTÓN REPRODUCIR */}
+                          <button onClick={() => setCurrentSong(song)} className="btn-action edit">
+                            <Play size={18} fill="currentColor" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* COLUMNA DERECHA: REPRODUCTOR FIJO */}
+        {currentSong && (
+          <aside className="side-player-panel">
+            <div className="side-player-card">
+              <img src={currentSong.cover_path} className="side-player-cover" alt="" />
+              <h3 className="side-player-title">{currentSong.name}</h3>
+              <p className="side-player-subtitle">{currentSong.collection_name || 'Single'}</p>
+              
+              <audio 
+                ref={audioRef}
+                autoPlay 
+                onPlay={handlePlay}
+                onPause={handlePauseOrEnd}
+                onEnded={() => { handlePauseOrEnd(); playNextSong(); }}
+                controls
+                src={currentSong.audio_path}
+                className="custom-audio-player"
+                onLoadedData={(e) => e.target.volume = 0.5}
+              />
+            </div>
+          </aside>
+        )}
+      </div>
     </div>
   );
 };
-
-// Reutilizamos estilos de Explore
-const gridStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '25px', marginTop: '20px' };
-const cardStyle = { background: '#181818', padding: '15px', borderRadius: '10px', color: 'white' };
-const coverStyle = { width: '100%', aspectRatio: '1/1', objectFit: 'cover', borderRadius: '8px' };
-const titleStyle = { fontSize: '1rem', margin: '5px 0' };
-const iconBtnStyle = { background: 'none', border: 'none', cursor: 'pointer' };
-const playBtnStyle = { flex: 1, padding: '8px', borderRadius: '20px', border: 'none', background: '#1db954', color: 'white', cursor: 'pointer' };
-const playerBarStyle = { position: 'fixed', bottom: 0, left: 0, width: '100%', height: '90px', background: '#282828', display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '0 20px', zIndex: 1000, color: 'white' };
 
 export default Favorites;

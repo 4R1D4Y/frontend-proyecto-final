@@ -131,8 +131,4 @@ const Dashboard = () => {
   );
 };
 
-const sectionStyle = { marginBottom: '30px', padding: '20px', background: '#f9f9f9', borderRadius: '8px' };
-const inputStyle = { display: 'block', width: '100%', marginBottom: '10px', padding: '8px' };
-const btnUpdateStyle = { background: '#1db954', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer' };
-
 export default Dashboard;

@@ -107,9 +107,4 @@ const Register = () => {
   );
 };
 
-// Estilos rápidos
-// const formContainerStyle = { maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' };
-// const inputGroupStyle = { marginBottom: '15px', display: 'flex', flexDirection: 'column' };
-// const btnStyle = { width: '100%', padding: '10px', background: '#1db954', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' };
-
 export default Register;

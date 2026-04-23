@@ -1,0 +1,82 @@
+.favorites-page-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.favorites-main-content {
+  display: flex;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.favorites-column {
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+.favorites-column.with-player {
+  flex: 0 0 65%;
+}
+
+.no-favorites-msg {
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  margin-top: 50px;
+  font-size: 1.2rem;
+}
+
+/* Ajustes para la tabla de favoritos */
+.fav-date-cell, .fav-duration-cell {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+.active-row {
+  background: rgba(47, 50, 230, 0.1) !important;
+}
+
+.active-row td {
+  border-bottom: 1px solid var(--color-accent) !important;
+}
+
+/* Reutilización de los estilos de Side Player que definimos para Explore */
+/* (Asegúrate de que estas clases estén en theme.css o cópialas aquí) */
+.side-player-panel {
+  flex: 0 0 30%;
+  position: sticky;
+  top: 100px; 
+  height: fit-content;
+  align-self: flex-start;
+}
+
+.side-player-card {
+  background: var(--color-card);
+  padding: 25px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.side-player-cover {
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  object-fit: cover;
+}
+
+.side-player-title {
+  color: #FFF;
+  margin: 10px 0 5px 0;
+}
+
+.side-player-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.custom-audio-player {
+  width: 100%;
+}

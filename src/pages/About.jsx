@@ -68,17 +68,4 @@ const About = () => {
   );
 };
 
-// --- ESTILOS ---
-// const containerStyle = { maxWidth: '900px', margin: '40px auto', padding: '0 20px', color: '#fff' };
-// const headerStyle = { textAlign: 'center', marginBottom: '60px' };
-// const mainImgStyle = { width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '15px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' };
-// const sectionStyle = { marginBottom: '40px', textAlign: 'justify' };
-// const introTextStyle = { fontSize: '1.25rem', lineHeight: '1.8', color: '#ccc' };
-// const infoGridStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' };
-// const cardStyle = { background: '#181818', padding: '25px', borderRadius: '12px', borderLeft: '4px solid #1db954' };
-// const featuredSongsStyle = { display: 'flex', gap: '20px', marginTop: '20px', overflowX: 'auto', paddingBottom: '10px' };
-// const songItemStyle = { textAlign: 'center', minWidth: '120px' };
-// const smallCoverStyle = { width: '120px', height: '120px', borderRadius: '8px', marginBottom: '8px' };
-// const communityBoxStyle = { marginTop: '60px', padding: '30px', background: '#1db95422', borderRadius: '15px', border: '1px solid #1db954' };
-
 export default About;
