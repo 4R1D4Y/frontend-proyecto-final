@@ -1,123 +1,121 @@
-.explore-container {
-  display: flex;
-  gap: 30px;
-  padding: 20px;
-  min-height: 100vh;
+/* src/styles/Explore.css */
+
+.explore-page-wrapper {
+  width: 100%;
 }
 
-/* Columna de canciones */
-.songs-column {
-  flex: 1;
-  transition: all 0.3s ease;
-}
-.songs-column.with-player {
-  max-width: 65%; /* Deja espacio para el panel derecho */
-}
-
-/* Header Sticky (Título + Filtros) */
+/* --- HEADER STICKY (ANCHO COMPLETO) --- */
 .sticky-header {
   position: sticky;
-  top: 70px; /* Ajusta según tu Navbar */
-  width: 100%; /* Ocupa todo el navegador */
-  background-color: #2F32E6; 
+  top: 80px; /* Alineado con el Navbar */
+  width: 100%;
+  background-color: var(--bg-blue); 
   z-index: 1100;
-  padding: 20px 0;
+  padding: 25px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .header-inner-content {
-  max-width: 1200px; /* Centra el texto dentro del bloque azul*/
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* Opcional: Un pequeño difuminado abajo para que la transición al negro sea suave */
-.sticky-header::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -20px;
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(180deg, #2F32E6 0%, transparent 100%);
-  pointer-events: none;
+  padding: 0 30px;
 }
 
 .explore-title {
+  font-family: var(--font-title);
+  font-weight: 800;
   font-size: 2.5rem;
-  margin-bottom: 15px;
+  margin: 0 0 15px 0;
+  color: #FFFFFF;
 }
 
+/* --- FILTROS --- */
 .filter-container {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .btn-filter {
-  background-color: var(--color-btn);
-  color: #FFFFFF;
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 8px 20px;
-  border-radius: 20px;
+  background-color: var(--bg-black);
+  color: var(--color-text);
+  border: 1px solid var(--border-subtle);
+  padding: 10px 22px;
+  border-radius: 50px;
   font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .btn-filter:hover {
-  background-color: var(--color-btn-hover);
-  border-color: var(--color-btn-active);
+  background-color: var(--color-card-hover);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .btn-filter.active {
-  background-color: var(--color-btn-active);
-  border-color: var(--color-btn-active);
-  font-weight: bold;
+  background-color: #FFFFFF; /* Blanco para resaltar el activo sobre azul */
+  color: var(--bg-black);
+  border-color: #FFFFFF;
 }
 
-/* Tarjeta Horizontal */
+/* --- LAYOUT PRINCIPAL --- */
 .explore-main-content {
   display: flex;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
-  gap: 30px;
+  padding: 30px;
+  gap: 40px;
 }
 
+.songs-column {
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+.songs-column.with-player {
+  flex: 0 0 65%; /* Espacio fijo para dejar sitio al player */
+}
+
+/* --- TARJETA HORIZONTAL --- */
 .horizontal-card {
   display: flex;
-  background: var(--color-card);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 15px;
+  background-color: var(--color-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
   gap: 20px;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
 .horizontal-card.playing {
-  border-color: var(--color-btn-active);
-  background: rgba(47, 50, 230, 0.1);
+  border-color: var(--color-accent);
+  background-color: rgba(47, 50, 230, 0.1); /* Sutil tinte azul */
 }
 
 .horizontal-card:hover {
-  transform: translateX(10px);
-  border-color: #F8F9FA;
-  background: linear-gradient(180deg, #1a1a1a 0%, #3f42ff 100%);
+  background-color: var(--color-card-hover);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(8px);
 }
 
 .card-cover-md {
   width: 100px;
   height: 100px;
-  border-radius: 8px;
+  border-radius: 10px;
   object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .card-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .card-top-row {
@@ -127,81 +125,125 @@
 }
 
 .card-main-info h3 {
-  margin: 0;
-  font-size: 1.2rem;
+  margin: 0 0 5px 0;
+  font-size: 1.25rem;
+  font-weight: 700;
   cursor: pointer;
+  color: var(--color-text);
 }
 
 .card-type {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 
 .card-stats-actions {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: center;
   gap: 20px;
 }
 
-.btn-play-card {
-  align-self: flex-start;
-  margin-top: 10px;
-  background: var(--color-btn-active);
-  color: white;
-  border: none;
-  padding: 6px 15px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  cursor: pointer;
+.card-repros {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
 }
 
+/* Botón Reproducir en Tarjeta */
+.btn-play-card {
+  align-self: flex-start;
+  margin-top: 15px;
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-play-card:hover {
+  background-color: var(--color-btn-hover);
+  transform: scale(1.05);
+}
+
+/* Iconos Like/Favorito */
 .icon-btn {
-  background: none;      /* Quita el fondo gris */
-  border: none;          /* Quita el borde por defecto */
-  padding: 10px;            /* Quita el espacio interno */
-  cursor: pointer;       /* Mantiene la mano al pasar el ratón */
-  transition: transform 0.2s ease; /* Para que al clicar haga un pequeño efecto */
-  outline: none;         /* Quita el recuadro que sale al hacer clic */
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
 }
 
 .icon-btn:hover {
-  transform: scale(1.2); /* El icono crece un poco al pasar el ratón */
+  transform: scale(1.2);
+  color: white;
 }
 
-.icon-btn:active {
-  transform: scale(0.9); /* Efecto de pulsación al hacer clic */
+.icon-btn svg[fill="var(--color-btn-active)"] {
+  filter: drop-shadow(0 0 8px var(--color-accent));
 }
 
-/* Panel del Reproductor Derecho */
+/* --- REPRODUCTOR LATERAL --- */
 .side-player-panel {
-  width: 30%;
+  flex: 0 0 30%;
   position: sticky;
-  top: 300px; /* Al aumentar este valor, la tarjeta baja y se ve más centrada */
-  height: fit-content; /* Importante para que el sticky no se rompa */
+  top: 150px; /* Centrado vertical visual */
+  height: fit-content;
   align-self: flex-start;
 }
 
 .side-player-card {
-  background: var(--color-card);
-  padding: 25px;
-  border-radius: 20px;
+  background-color: var(--color-card);
+  padding: 30px;
+  border-radius: 24px;
+  border: 1px solid var(--border-subtle);
   text-align: center;
-  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
 .side-player-cover {
   width: 100%;
   aspect-ratio: 1/1;
-  border-radius: 15px;
+  border-radius: 16px;
   margin-bottom: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  object-fit: cover;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.side-player-title {
+  font-family: var(--font-title);
+  font-size: 1.2rem;
+  color: #FFFFFF;
+  margin: 10px 0 5px 0;
+}
+
+.side-player-subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 25px;
 }
 
 .custom-audio-player {
   width: 100%;
-  margin-top: 20px;
-  filter: invert(100%) hue-rotate(180deg); /* Opcional: para que el player de browser sea oscuro */
+  filter: invert(100%) hue-rotate(180deg) brightness(1.5); /* Player oscuro */
+}
+
+/* Responsivo */
+@media (max-width: 992px) {
+  .explore-main-content { flex-direction: column; }
+  .songs-column.with-player { flex: 1; max-width: 100%; }
+  .side-player-panel { position: fixed; bottom: 0; left: 0; width: 100%; top: auto; z-index: 1000; padding: 10px; }
+  .side-player-card { border-radius: 16px 16px 0 0; display: flex; align-items: center; gap: 15px; padding: 15px; }
+  .side-player-cover { width: 50px; height: 50px; margin: 0; }
+  .side-player-subtitle { display: none; }
 }
