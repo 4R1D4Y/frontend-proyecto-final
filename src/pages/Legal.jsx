@@ -3,15 +3,16 @@ import { useEffect, useRef } from 'react';
 import { legalTranslations } from "../lang/legalTranslations";
 import { trackEvent } from '../utils/analytics';
 
+import "../styles/legal.css";
+
 const Legal = () => {
   const { lang } = useAuth();
 
   const t = legalTranslations[lang];
 
-  const hasTracked = useRef(false); // 2. Creamos la referencia
+  const hasTracked = useRef(false);
 
   useEffect(() => {
-    // 3. Solo disparamos si no se ha hecho ya
     if (!hasTracked.current) {
       trackEvent('license_view', null, 1);
       hasTracked.current = true; // Marcamos como hecho
@@ -19,76 +20,65 @@ const Legal = () => {
   }, []);
   
   return (
-    <div style={containerStyle}>
-      <h1 style={mainTitleStyle}>{t.title}</h1>
-      <p style={{ color: '#666', marginBottom: '40px' }}>{t.update}: {new Date().toLocaleDateString()}</p>
+    <div className="legal-container">
+      <h1 className="page-title">{t.title}</h1>
+      <p className="last-update">{t.update}: {new Date().toLocaleDateString()}</p>
 
-      {/* NUEVA SECCIÓN: Licencias de Uso */}
-      <section style={sectionStyle}>
-        <h2 style={subTitleStyle}>{t.sec1_title}</h2>
-        <p>{t.sec1_intro}</p>
-        <div style={licenseBoxStyle}>
-          <p><strong>{t.sec1_personal_t}</strong> {t.sec1_personal_d}</p>
-          <p><strong>{t.sec1_content_t}</strong> {t.sec1_content_d}</p>
-          <p><strong>{t.sec1_comercial_t}</strong> {t.sec1_comercial_d}</p>
-        </div>
-      </section>
+      <div className="legal-content">
+        {/* SECCIÓN 1: Licencias de Uso */}
+        <section className="legal-section">
+          <h2 className="legal-subtitle">{t.sec1_title}</h2>
+          <div className="legal-card">
+            <p className="legal-intro">{t.sec1_intro}</p>
+            <ul className="legal-list">
+              <li><strong>{t.sec1_personal_t}</strong> {t.sec1_personal_d}</li>
+              <li><strong>{t.sec1_content_t}</strong> {t.sec1_content_d}</li>
+              <li><strong>{t.sec1_comercial_t}</strong> {t.sec1_comercial_d}</li>
+            </ul>
+          </div>
+        </section>
 
-      <hr style={dividerStyle} />
+        {/* SECCIÓN 2: Términos de Uso */}
+        <section className="legal-section">
+          <h2 className="legal-subtitle">{t.sec2_title}</h2>
+          <div className="legal-card">
+            <p>{t.sec2_intro}</p>
+            <ul className="legal-list dots">
+              <li>{t.sec2_li1}</li>
+              <li>{t.sec2_li2}</li>
+              <li>{t.sec2_li3}</li>
+            </ul>
+          </div>
+        </section>
 
-      {/* Sección: Términos de Uso */}
-      <section style={sectionStyle}>
-        <h2 style={subTitleStyle}>{t.sec2_title}</h2>
-        <p>{t.sec2_intro}</p>
-        <ul style={listStyle}>
-          <li>{t.sec2_li1}</li>
-          <li>{t.sec2_li2}</li>
-          <li>{t.sec2_li3}</li>
-        </ul>
-      </section>
+        {/* SECCIÓN 3: Política de Privacidad */}
+        <section className="legal-section">
+          <h2 className="legal-subtitle">{t.sec3_title}</h2>
+          <div className="legal-card">
+            <p>{t.sec3_intro}</p>
+            <ul className="legal-list">
+              <li><strong>{t.sec3_li1_t}</strong> {t.sec3_li1_d}</li>
+              <li><strong>{t.sec3_li2_t}</strong> {t.sec3_li2_d}</li>
+            </ul>
+          </div>
+        </section>
 
-      <hr style={dividerStyle} />
-
-      {/* Sección: Política de Privacidad */}
-      <section style={sectionStyle}>
-        <h2 style={subTitleStyle}>{t.sec3_title}</h2>
-        <p>{t.sec3_intro}</p>
-        <ul style={listStyle}>
-          <li><strong>{t.sec3_li1_t}</strong> {t.sec3_li1_d}</li>
-          <li><strong>{t.sec3_li2_t}</strong> {t.sec3_li2_d}</li>
-        </ul>
-      </section>
-
-      {/* Sección: Política de cookies */}
-      <section style={sectionStyle}>
-        <h2 style={subTitleStyle}>{t.sec4_title}</h2>
-        <p>{t.sec4_intro}</p>
-        <ul style={listStyle}>
-            <li><strong>XSRF-TOKEN:</strong> {t.sec4_li1}</li>
-            <li><strong>COOKIE_CONSENT:</strong> {t.sec4_li2}</li>
-            <li><strong>AUTH_TOKEN (LocalStorage):</strong> {t.sec4_li3}</li>
-            <li><strong>LANGUAGE_PREF:</strong> {t.sec4_li4}</li>
-        </ul>
-    </section>
+        {/* SECCIÓN 4: Política de Cookies */}
+        <section className="legal-section">
+          <h2 className="legal-subtitle">{t.sec4_title}</h2>
+          <div className="legal-card">
+            <p>{t.sec4_intro}</p>
+            <ul className="legal-list tech">
+                <li><span>XSRF-TOKEN:</span> {t.sec4_li1}</li>
+                <li><span>COOKIE_CONSENT:</span> {t.sec4_li2}</li>
+                <li><span>AUTH_TOKEN (Local):</span> {t.sec4_li3}</li>
+                <li><span>LANGUAGE_PREF:</span> {t.sec4_li4}</li>
+            </ul>
+          </div>
+        </section>
+      </div>
     </div>
   );
 };
-
-// --- ESTILOS EXTRA ---
-const licenseBoxStyle = {
-  background: '#f9f9f9',
-  borderLeft: '4px solid #1db954',
-  padding: '15px',
-  marginTop: '10px',
-  fontSize: '0.95rem'
-};
-
-// ... (Mantén los estilos anteriores de containerStyle, mainTitleStyle, etc.)
-const containerStyle = { maxWidth: '800px', margin: '60px auto', padding: '0 20px', lineHeight: '1.6', color: '#333' };
-const mainTitleStyle = { fontSize: '2.5rem', marginBottom: '10px' };
-const sectionStyle = { marginBottom: '30px' };
-const subTitleStyle = { fontSize: '1.5rem', color: '#1db954', marginBottom: '15px' };
-const listStyle = { paddingLeft: '20px' };
-const dividerStyle = { border: '0', borderTop: '1px solid #eee', margin: '40px 0' };
 
 export default Legal;
