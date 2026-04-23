@@ -1,0 +1,85 @@
+/* src/styles/NotFound.css */
+
+.notfound-container {
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  /* El fondo ya es el gradiente global, pero podemos oscurecerlo un poco aquí */
+  background: rgba(0, 0, 0, 0.2); 
+}
+
+.notfound-title {
+  font-family: var(--font-title);
+  font-size: 1.5rem;
+  letter-spacing: 8px;
+  color: var(--color-accent); /* Tu azul eléctrico */
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+/* EFECTO GLITCH / VIBRACIÓN */
+.glitch-wrapper {
+  position: relative;
+  animation: shake 0.5s infinite alternate;
+}
+
+.error-code {
+  font-family: var(--font-title);
+  font-size: 10rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  display: block;
+  margin: 20px 0;
+  /* Sombras de colores (Cyan y Magenta) para efecto digital */
+  text-shadow: 
+    4px 4px 0px #ff0055, 
+    -4px -4px 0px #00fbff;
+}
+
+.notfound-desc {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  max-width: 500px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+/* BOTÓN BLANCO PREMIUM */
+.btn-notfound {
+  padding: 18px 40px;
+  background-color: #FFFFFF;
+  color: #000000;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  letter-spacing: 1px;
+}
+
+.btn-notfound:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(47, 50, 230, 0.4);
+}
+
+/* ANIMACIÓN SHAKE */
+@keyframes shake {
+  0% { transform: translate(0); }
+  25% { transform: translate(-2px, 2px); }
+  50% { transform: translate(2px, -2px); }
+  75% { transform: translate(-2px, -2px); }
+  100% { transform: translate(2px, 2px); }
+}
+
+/* Ajuste para móviles */
+@media (max-width: 768px) {
+  .error-code { font-size: 6rem; }
+  .notfound-title { font-size: 1.2rem; letter-spacing: 4px; }
+}
