@@ -118,15 +118,19 @@ const Dashboard = () => {
         {passMsg.text && <p className={`status-msg ${passMsg.type}`}>{passMsg.text}</p>}
       </section>
 
-      {/* SECCIÓN ELIMINAR CUENTA (ZONA PELIGROSA) */}
-      <div className="danger-divider"></div>
-      <section className="dashboard-section danger-zone">
-        <h3 className="danger-title">{t.secDelete_t}</h3>
-        <p className="danger-desc">{t.secDelete_d}</p>
-        <button onClick={handleDeleteAccount} className="btn-delete-account">
-          {t.secDelete_b}
-        </button>
-      </section>
+      { user.role !== "admin" && (
+        <>
+        {/* SECCIÓN ELIMINAR CUENTA (ZONA PELIGROSA) */}
+        <div className="danger-divider"></div>
+        <section className="dashboard-section danger-zone">
+          <h3 className="danger-title">{t.secDelete_t}</h3>
+          <p className="danger-desc">{t.secDelete_d}</p>
+          <button onClick={handleDeleteAccount} className="btn-delete-account">
+            {t.secDelete_b}
+          </button>
+        </section>
+        </>
+      )}
     </div>
   );
 };
