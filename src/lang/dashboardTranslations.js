@@ -1,5 +1,13 @@
 export const dashBoardTranslations = {
     es: {
+        emptyEmail: "El email no puede estar vacío.",
+        formatEmail: "Formato de email no valido.",
+        emptyPassword: "Todos los campos de contraseña son obligatorios.",
+        matchPassword: "La nueva contraseña y la confirmación no coinciden.",
+        shortPassword: "La nueva contraseña debe tener al menos 8 caracteres.",
+        currentPassword: "La contraseña actual no coincide.",
+        successEmail: "Email actualizado correctamente.",
+        successPassword: "Contraseña actualizada correctamente.",
         connectionError: "Error de conexión",
         passwordMatchError: "Las contraseñas no coinciden",
         passwordChanged: "Contraseña actualizada",
@@ -26,6 +34,14 @@ export const dashBoardTranslations = {
         confirmDeleteButtonCancel: "Cancelar"
     },
     en: {
+        emptyEmail: "Email cannot be empty.",
+        formatEmail: "Invalid email format.",
+        emptyPassword: "All password fields are required.",
+        matchPassword: "New password and confirmation do not match.",
+        shortPassword: "New password must be at least 8 characters.",
+        currentPassword: "Current password is incorrect.",
+        successEmail: "Email updated successfully.",
+        successPassword: "Password updated successfully.",
         connectionError: "Connection error",
         passwordMatchError: "The passwords do not match",
         passwordChanged: "Updated password",

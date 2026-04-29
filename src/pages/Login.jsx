@@ -9,15 +9,39 @@ import '../styles/auth.css';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState();
   
   const { login, lang } = useAuth();
   const navigate = useNavigate();
   const t = loginTranslations[lang];
 
+   const validateEmail = (email) => {
+    return String(email)
+      .toLowerCase()
+      .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    const newErrors = [];
+
+    if (!email.trim()) {
+      newErrors.push('emptyEmail');
+    } else if (!validateEmail(email)) {
+      newErrors.push('formatEmail');
+    }
+
+    if (!password) {
+      newErrors.push('emptyPassword');
+    }
+
+    if (newErrors.length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors([]);
+
     try {
       await login({ email, password });
       navigate('/'); // Si sale bien, nos manda a la Home
@@ -38,9 +62,18 @@ const Login = () => {
             color: '#fff',
             confirmButtonColor: '#1db954'
         });
-    } else {
-        setError(err.response?.data?.message || t.error);
-    }
+
+      } else if (err.response?.status === 401) {
+        // ERROR DE CREDENCIALES (Email o contraseña mal)
+        setErrors(['invalidCredentials']);
+      } else if (err.response?.data?.errors) {
+        // ERRORES DE VALIDACIÓN DEL SERVIDOR (si los hubiera)
+        const serverErrors = Object.values(err.response.data.errors).flat();
+        setErrors(serverErrors);
+        
+      } else {
+          setErrors([err.response?.data?.message || t.error]);
+      }
     }
   };
 
@@ -49,9 +82,17 @@ const Login = () => {
       <div className="auth-card">
         <h2 className="auth-title">{t.title}</h2>
         
-        {error && <p className="auth-error-msg">{error}</p>}
+        {Array.isArray(errors) && errors.length > 0 && (
+          <div className="auth-error-msg">
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {errors.map((err, index) => (
+                <li key={index}>• {t[err]}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
           <div className="auth-input-group">
             <label>{t.email}</label>
             <input 
@@ -60,7 +101,6 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)} 
               className="auth-input"
               placeholder="example@mail.com"
-              required 
             />
           </div>
 
@@ -72,7 +112,6 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)} 
               className="auth-input"
               placeholder="••••••••"
-              required 
             />
           </div>
 
@@ -82,9 +121,9 @@ const Login = () => {
         </form>
 
         <p className="auth-footer-text">
-          {lang === 'es' ? '¿No tiene cuenta?' : "Don't have an account?"} {' '}
+          {t.noAccount} {' '}
           <Link to="/register" className="auth-link">
-            {lang === 'es' ? 'Regístrate' : 'Sign Up'}
+            {t.signup}
           </Link>
         </p>
       </div>

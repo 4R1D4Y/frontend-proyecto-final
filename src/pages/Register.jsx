@@ -11,19 +11,40 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState();
   const { lang } = useAuth();
   const t = registerTranslations[lang];
   
   const { login } = useAuth(); // Usamos login para auto-loguear tras registrar
   const navigate = useNavigate();
 
+  const validateEmail = (email) => {
+    return String(email).toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    const newErrors = [];
+
+    if (!email.trim()) {
+      newErrors.push('emptyEmail');
+    } else if (!validateEmail(email)) {
+      newErrors.push('formatEmail');
+    }
+
+    if (!password) {
+      newErrors.push('emptyPassword');
+    } else if (password.length < 8) {
+      newErrors.push('shortPassword');
+    }
 
     if (password !== passwordConfirmation) {
-      return setError(t.error_password_match);
+      newErrors.push('matchPassword');
+    }
+
+    if (newErrors.length > 0) {
+      setErrors(newErrors);
+      return;
     }
 
     try {
@@ -37,9 +58,14 @@ const Register = () => {
 
       // 2. Si el registro es exitoso, hacemos login automático
       await login({ email, password });
-      navigate('/explore');
+      navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al crear la cuenta');
+      if (err.response?.status === 422) {
+        // Laravel devuelve errores de validación aquí
+        setErrors(['takenEmail']);
+      } else {
+        setErrors(['error']);
+      }
     }
   };
 
@@ -48,9 +74,17 @@ const Register = () => {
       <div className="auth-card">
         <h2 className="auth-title">{t.title}</h2>
         
-        {error && <p className="auth-error-msg">{error}</p>}
-        
-        <form onSubmit={handleSubmit} className="auth-form">
+        {Array.isArray(errors) && errors.length > 0 && (
+          <div className="auth-error-msg">
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {errors.map((err, index) => (
+                <li key={index}>• {t[err]}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
           <div className="auth-input-group">
             <label>{t.email}</label>
             <input 
@@ -59,7 +93,6 @@ const Register = () => {
               onChange={(e) => setEmail(e.target.value)} 
               className="auth-input"
               placeholder="example@mail.com"
-              required 
             />
           </div>
 
@@ -71,7 +104,6 @@ const Register = () => {
               onChange={(e) => setPassword(e.target.value)} 
               className="auth-input"
               placeholder="••••••••"
-              required 
             />
           </div>
 
@@ -83,7 +115,6 @@ const Register = () => {
               onChange={(e) => setPasswordConfirmation(e.target.value)} 
               className="auth-input"
               placeholder="••••••••"
-              required 
             />
           </div>
 

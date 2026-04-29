@@ -1,5 +1,9 @@
 export const loginTranslations = {
     es: {
+        emptyEmail: "El campo email es obligatorio.",
+        formatEmail: "El formato de email no es valido.",
+        emptyPassword: "Debes introducir tu contraseña.",
+        invalidCredentials: "El email o la contraseña son incorrectos.",
         error: "Credenciales incorrectas o error de servidor",
         title: "Iniciar Sesión",
         email: "E-mail:",
@@ -10,9 +14,15 @@ export const loginTranslations = {
         accountBlocked: "Cuenta bloqueada",
         accountBlocked_message: "Tu cuenta ha sido bloqueada permanentemente.",
         accountAvailable: "Disponible el:",
-        appeal: "Si crees que es un error, contacta con soporte."
+        appeal: "Si crees que es un error, contacta con soporte.",
+        noAccount: "¿No tienes cuenta?",
+        signup: "Regístrate"
     },
     en: {
+        emptyEmail: "Email is required.",
+        formatEmail: "Invalid email format.",
+        emptyPassword: "Password is required.",
+        invalidCredentials: "Invalid email or password.",
         error: "Incorrect credentials or server error",
         title: "Log In",
         email: "E-mail:",
@@ -23,6 +33,8 @@ export const loginTranslations = {
         accountBlocked: "Account blocked",
         accountBlocked_message: "Your account has been permanently blocked.",
         accountAvailable: "Available on:",
-        appeal: "If you believe this is an error, contact support."
+        appeal: "If you believe this is an error, contact support.",
+        noAccount: "Don't have an account?",
+        signup: "Sign Up"
     }
 }
