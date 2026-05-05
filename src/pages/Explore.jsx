@@ -4,6 +4,8 @@ import { ThumbsUp, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { exploreTranslations } from '../lang/exploreTranslations';
 import { trackEvent } from '../utils/analytics';
+import { useNavigate, Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 import '../styles/explore.css';
 
@@ -16,6 +18,7 @@ const Explore = () => {
   const audioRef = useRef(null);
   const [lastTrackedTime, setLastTrackedTime] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
+  const navigate = useNavigate();
   const t = exploreTranslations[lang];
 
   // URL base para las imágenes (definida en tu .env de React)
@@ -47,7 +50,25 @@ const Explore = () => {
   };
 
   const handleInteraction = async (songId, type) => {
-    if (!user) return alert(t.interactions);
+    if (!user) {
+      Swal.fire({
+        title: t.alertTitle,
+        text: t.alertText,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: t.alertConfirm,
+        cancelButtonText: t.alertCancel,
+        background: 'var(--color-card)', // Usamos tu color de Figma
+        color: '#fff',
+        confirmButtonColor: 'var(--color-accent)', // Tu azul eléctrico
+        cancelButtonColor: '#333',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/login'); // Redirigimos al usuario al login
+        }
+      });
+      return;
+    }
 
     try {
       // type será 'like' o 'favorite' según el botón pulsado

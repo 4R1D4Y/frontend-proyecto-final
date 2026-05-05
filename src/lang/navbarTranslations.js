@@ -6,7 +6,7 @@ export const navbarTranslations = {
         favorites: "Favoritos",
         profile: "Perfil",
         admin: "Admin",
-        login: "Logearse",
+        login: "Loguearse",
         signin: "Registrarse"
     },
     en: {

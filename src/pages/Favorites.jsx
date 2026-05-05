@@ -83,6 +83,21 @@ const Favorites = () => {
     setHasStarted(false);
   }, [currentSong]);
 
+  const handleLike = async (songId) => {
+    try {
+      const res = await api.post(`/songs/${songId}/like`);
+      // Actualizamos el estado local para que el icono cambie al instante
+      setFavorites(favorites.map(song => {
+        if (song.id === songId) {
+          return { ...song, is_liked: res.data.is_liked };
+        }
+        return song;
+      }));
+    } catch (error) {
+      console.error("Error al procesar like:", error);
+    }
+  };
+
   const removeFavorite = async (songId) => {
     try {
       await api.post(`/songs/${songId}/favorite`);
@@ -109,12 +124,12 @@ const Favorites = () => {
               <table className="admin-table favorites-table">
                 <thead>
                   <tr>
-                    <th>{t.songsColumnCover || '#'}</th>
-                    <th>{t.songsColumnName || 'Nombre'}</th>
-                    <th>{t.songsColumnType || 'Tipo'}</th>
-                    <th><Calendar size={14} /> {t.date_saved || 'Guardado'}</th>
+                    <th>{t.cover || '#'}</th>
+                    <th>{t.name || 'Nombre'}</th>
+                    <th>{t.type || 'Tipo'}</th>
+                    <th><Calendar size={14} /> {t.saved || 'Guardado'}</th>
                     <th><Clock size={14} /></th>
-                    <th>{t.songsColumnActions || 'Acciones'}</th>
+                    <th>{t.actions || 'Acciones'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -127,8 +142,14 @@ const Favorites = () => {
                       <td className="fav-duration-cell">{formatDuration(song.duration)}</td>
                       <td>
                         <div className="admin-actions-btns">
-                          {/* BOTÓN LIKE (Placeholder visual ya que no tienes la función de quitar like aquí aún) */}
-                          <button className="btn-action"><ThumbsUp size={18} color="#b3b3b3" /></button>
+                          {/* BOTÓN LIKE */}
+                          <button onClick={() => handleLike(song.id)} className="btn-action">
+                            <ThumbsUp 
+                              size={18} 
+                              fill={song.is_liked ? "var(--color-accent)" : "none"} 
+                              color={song.is_liked ? "var(--color-accent)" : "#b3b3b3"} 
+                            />
+                          </button>
                           
                           {/* BOTÓN FAVORITO (Quitar) */}
                           <button onClick={() => removeFavorite(song.id)} className="btn-action delete">

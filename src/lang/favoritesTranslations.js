@@ -3,14 +3,22 @@ export const favoritesTranslations = {
         loading: "Cargando favoritos...",
         title: "Mis Favoritos",
         no_songs: "Aun no has guardado ninguna canción.",
-        date_saved: "Guardado el: ",
-        replay: "Reproducir"
+        replay: "Reproducir",
+        cover: "portada",
+        name: "nombre",
+        type: "tipo",
+        saved: "guardado el:",
+        actions: "acciones"
     },
     en: {
         loading: "Loading favorites...",
         title: "My Favorites",
         no_songs: "You haven't saved any songs yet.",
-        date_saved: "Saved on: ",
-        replay: "Replay"
+        replay: "Replay",
+        cover: "cover",
+        name: "name",
+        type: "type",
+        saved: "saved on:",
+        actions: "acciones"
     }
 }

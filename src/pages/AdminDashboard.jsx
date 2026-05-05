@@ -21,6 +21,10 @@ const AdminDashboard = () => {
   const [searchUser, setSearchUser] = useState('');
   const [stats, setStats] = useState(null);
   const [events, setEvents] = useState([]);
+
+  const [currentPageSongs, setCurrentPageSongs] = useState(1);
+  const [currentPageUsers, setCurrentPageUsers] = useState(1);
+  const itemsPerPage = 10;
   
   const { lang } = useAuth();
   const t = adminDashboardTranslations[lang];
@@ -58,13 +62,21 @@ const AdminDashboard = () => {
     };
   };
 
+  // Para Canciones
   const filteredSongs = songs.filter(song => 
     song.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const lastIndexSongs = currentPageSongs * itemsPerPage;
+  const firstIndexSongs = lastIndexSongs - itemsPerPage;
+  const currentSongs = filteredSongs.slice(firstIndexSongs, lastIndexSongs);
 
+  // Para Usuarios
   const filteredUsers = users.filter(user => 
     user.email.toLowerCase().includes(searchUser.toLowerCase())
   );
+  const lastIndexUsers = currentPageUsers * itemsPerPage;
+  const firstIndexUsers = lastIndexUsers - itemsPerPage;
+  const currentUsers = filteredUsers.slice(firstIndexUsers, lastIndexUsers);
 
   const fetchData = async () => {
     setLoading(true);
@@ -169,6 +181,35 @@ const AdminDashboard = () => {
         Swal.fire('Error', err.response?.data?.message || t.errorChangeStatusUser, 'error');
       }
     }
+  };
+
+  
+
+  const Pagination = ({ current, total, paginate }) => {
+    const totalPages = Math.ceil(total / itemsPerPage);
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="admin-pagination">
+        <button 
+          disabled={current === 1} 
+          onClick={() => paginate(current - 1)}
+          className="pagination-btn"
+        >
+          &larr; {lang === 'es' ? 'Anterior' : 'Previous'}
+        </button>
+        <span className="pagination-info">
+          {lang === 'es' ? 'Página' : 'Page'} {current} {lang === 'es' ? 'de' : 'of'} {totalPages}
+        </span>
+        <button 
+          disabled={current === totalPages} 
+          onClick={() => paginate(current + 1)}
+          className="pagination-btn"
+        >
+          {lang === 'es' ? 'Siguiente' : 'Next'} &rarr;
+        </button>
+      </div>
+    );
   };
 
   if (loading) return <p style={{ padding: '20px' }}>{t.loading}</p>;
@@ -304,7 +345,7 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredSongs.map(song => (
+                {currentSongs.map(song => (
                   <tr key={song.id}>
                     <td><img src={song.cover_url} className="admin-mini-cover" alt="" /></td>
                     <td><span className="song-name-cell">{song.name}</span></td>
@@ -334,6 +375,13 @@ const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
+
+          <Pagination 
+            current={currentPageSongs} 
+            total={filteredSongs.length} 
+            paginate={setCurrentPageSongs} 
+          />
+
 
           {/* Panel lateral de edición (Drawer) */}
           {editingSong && (
@@ -376,7 +424,7 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map(u => (
+                {currentUsers.map(u => (
                   <tr key={u.id}>
                     <td><span className="user-id-cell">#{u.id}</span></td>
                     <td><span className="user-email-cell">{u.email}</span></td>
@@ -413,6 +461,12 @@ const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
+
+          <Pagination 
+            current={currentPageUsers} 
+            total={filteredUsers.length} 
+            paginate={setCurrentPageUsers} 
+          />
         </div>
       )}
     </div>

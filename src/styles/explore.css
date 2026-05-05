@@ -95,7 +95,7 @@
 
 .horizontal-card.playing {
   border-color: var(--color-accent);
-  background-color: rgba(47, 50, 230, 0.1); /* Sutil tinte azul */
+  background-color: rgb(192, 24, 214); /* Sutil tinte azul */
 }
 
 .horizontal-card:hover {
