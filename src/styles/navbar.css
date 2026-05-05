@@ -87,3 +87,15 @@
 .nav-profile-tag.active::after {
   display: none;
 }
+
+
+.nav-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 30px; /* Espacio entre el grupo de botones y el selector de idioma */
+}
+
+.nav-profile-tag {
+    /* Mantén tus estilos de la etiqueta de perfil */
+    white-space: nowrap;
+}
