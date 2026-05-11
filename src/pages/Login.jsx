@@ -3,28 +3,46 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { loginTranslations } from '../lang/loginTranslations';
-
 import '../styles/auth.css';
+
+/**
+ * Componente Login
+ * 
+ * Gestiona la autenticación de usuarios. Destaca por su robusto sistema de 
+ * manejo de errores, diferenciando entre fallos de credenciales, errores 
+ * de validación y estados administrativos de la cuenta (bloqueos/suspensiones).
+ */
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState();
+  const [errors, setErrors] = useState(); // Captura errores para feedback visual
   
   const { login, lang } = useAuth();
   const navigate = useNavigate();
   const t = loginTranslations[lang];
 
+  /**
+   * Validación sintáctica de Email.
+   * Se realiza en el cliente para evitar llamadas innecesarias a la API
+   * y mejorar la velocidad de respuesta de la interfaz.
+   */
    const validateEmail = (email) => {
     return String(email)
       .toLowerCase()
       .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
   };
 
+  /**
+   * Manejador de Autenticación.
+   * Implementa una lógica de captura de excepciones detallada basada en 
+   * códigos de estado HTTP estándar.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = [];
 
+    // Validaciones preventivas de campos vacíos o formato erróneo
     if (!email.trim()) {
       newErrors.push('emptyEmail');
     } else if (!validateEmail(email)) {
@@ -43,11 +61,17 @@ const Login = () => {
     setErrors([]);
 
     try {
+      // Invocación del servicio de login definido en el Contexto de Autenticación
       await login({ email, password });
-      navigate('/'); // Si sale bien, nos manda a la Home
+      navigate('/'); 
     } catch (err) {
+      /**
+       * Gestión de Seguridad (Status 403 - Forbidden):
+       * Si el servidor devuelve un 403, se procesa si la cuenta está suspendida
+       * temporalmente o bloqueada permanentemente, informando al usuario mediante SweetAlert2.
+       */
       if (err.response?.status === 403) {
-        const { status, until, message } = err.response.data;
+        const { status, until } = err.response.data;
         Swal.fire({
             title: status === 'suspended' ? t.accountSuspended : t.accountBlocked,
             html: `
@@ -64,15 +88,11 @@ const Login = () => {
         });
 
       } else if (err.response?.status === 401) {
-        // ERROR DE CREDENCIALES (Email o contraseña mal)
+        // Error de credenciales (Email o contraseña no coinciden en el backend)
         setErrors(['invalidCredentials']);
-      } else if (err.response?.data?.errors) {
-        // ERRORES DE VALIDACIÓN DEL SERVIDOR (si los hubiera)
-        const serverErrors = Object.values(err.response.data.errors).flat();
-        setErrors(serverErrors);
-        
       } else {
-          setErrors([err.response?.data?.message || t.error]);
+        // Captura de otros errores de servidor o mensajes personalizados
+        setErrors([err.response?.data?.message || t.error]);
       }
     }
   };
@@ -82,6 +102,7 @@ const Login = () => {
       <div className="auth-card">
         <h2 className="auth-title">{t.title}</h2>
         
+        {/* Renderizado de errores: mejora la accesibilidad informando al usuario de fallos específicos */}
         {Array.isArray(errors) && errors.length > 0 && (
           <div className="auth-error-msg">
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>

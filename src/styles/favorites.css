@@ -1,3 +1,5 @@
+/* src/styles/Favorites.css */
+
 .favorites-page-wrapper {
   max-width: 1200px;
   margin: 0 auto;
@@ -12,71 +14,74 @@
 
 .favorites-column {
   flex: 1;
-  transition: all 0.3s ease;
+  min-width: 0;
 }
 
 .favorites-column.with-player {
   flex: 0 0 65%;
 }
 
-.no-favorites-msg {
-  color: rgba(255, 255, 255, 0.5);
-  text-align: center;
-  margin-top: 50px;
-  font-size: 1.2rem;
+.fav-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--color-text);
 }
 
-/* Ajustes para la tabla de favoritos */
-.fav-date-cell, .fav-duration-cell {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.85rem;
+.fav-table th {
+  text-align: left;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.fav-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .active-row {
   background: rgba(47, 50, 230, 0.1) !important;
 }
 
-.active-row td {
-  border-bottom: 1px solid var(--color-accent) !important;
-}
-
-/* Reutilización de los estilos de Side Player que definimos para Explore */
-/* (Asegúrate de que estas clases estén en theme.css o cópialas aquí) */
 .side-player-panel {
   flex: 0 0 30%;
   position: sticky;
   top: 100px; 
   height: fit-content;
   align-self: flex-start;
+  z-index: 100;
 }
 
-.side-player-card {
-  background: var(--color-card);
-  padding: 25px;
-  border-radius: 20px;
-  border: 1px solid var(--border-subtle);
-  text-align: center;
-}
+@media (max-width: 1100px) {
+  .favorites-main-content {
+    flex-direction: column;
+    padding-bottom: 160px;
+  }
 
-.side-player-cover {
-  width: 100%;
-  aspect-ratio: 1/1;
-  border-radius: 15px;
-  margin-bottom: 20px;
-  object-fit: cover;
-}
+  .admin-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
 
-.side-player-title {
-  color: #FFF;
-  margin: 10px 0 5px 0;
-}
+  .fav-table {
+    min-width: 600px;
+  }
 
-.side-player-subtitle {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.9rem;
-  margin-bottom: 20px;
-}
+  .fav-table td, .fav-table th {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
 
-.custom-audio-player {
-  width: 100%;
+  .fav-date-cell, 
+  .fav-table th:nth-child(4) { 
+    display: none; 
+  }
+
+  .side-player-panel { position: fixed; bottom: 0; left: 0; width: 100%; top: auto; z-index: 1000; padding: 0 0 0 0; }
+  .side-player-card { border-radius: 16px 16px 0 0; display: flex; align-items: center; gap: 15px; padding: 15px; }
+  .side-player-cover { max-width: 50px; max-height: 50px; margin: 0; }
+  .side-player-subtitle { display: none; }
 }

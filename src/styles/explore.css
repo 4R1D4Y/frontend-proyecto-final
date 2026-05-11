@@ -2,20 +2,22 @@
 
 .explore-page-wrapper {
   width: 100%;
+  --header-height: 70px;
 }
 
-/* --- HEADER STICKY (ANCHO COMPLETO) --- */
 .sticky-header {
   position: sticky;
-  top: 80px; /* Alineado con el Navbar */
+  top: var(--header-height);
   width: 100%;
-  background-color: var(--bg-blue); 
+  background-color: var(--bg-blue);
   z-index: 1100;
   padding: 25px 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
-.header-inner-content {
+.header-inner-content,
+.explore-main-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 30px;
@@ -24,12 +26,11 @@
 .explore-title {
   font-family: var(--font-title);
   font-weight: 800;
-  font-size: 2.5rem;
-  margin: 0 0 15px 0;
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  margin-bottom: 15px;
   color: #FFFFFF;
 }
 
-/* --- FILTROS --- */
 .filter-container {
   display: flex;
   gap: 12px;
@@ -42,13 +43,12 @@
   border: 1px solid var(--border-subtle);
   padding: 10px 22px;
   border-radius: 50px;
-  font-family: var(--font-body);
-  font-weight: 600;
   font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .btn-filter:hover {
@@ -57,45 +57,39 @@
 }
 
 .btn-filter.active {
-  background-color: #FFFFFF; /* Blanco para resaltar el activo sobre azul */
+  background-color: #FFFFFF;
   color: var(--bg-black);
   border-color: #FFFFFF;
+  transform: translateY(-2px);
 }
 
-/* --- LAYOUT PRINCIPAL --- */
 .explore-main-content {
   display: flex;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
   gap: 40px;
+  align-items: flex-start;
 }
 
 .songs-column {
   flex: 1;
-  transition: all 0.3s ease;
+  min-width: 0;
 }
 
 .songs-column.with-player {
-  flex: 0 0 65%; /* Espacio fijo para dejar sitio al player */
+  flex: 0 0 65%;
 }
 
-/* --- TARJETA HORIZONTAL --- */
 .horizontal-card {
   display: flex;
   background-color: var(--color-card);
   border: 1px solid var(--border-subtle);
   border-radius: 16px;
   padding: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   gap: 20px;
   align-items: center;
-  transition: all 0.3s ease;
-}
-
-.horizontal-card.playing {
-  border-color: var(--color-accent);
-  background-color: rgb(192, 24, 214); /* Sutil tinte azul */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .horizontal-card:hover {
@@ -104,9 +98,14 @@
   transform: translateX(8px);
 }
 
+.horizontal-card.playing {
+  border-color: var(--color-accent);
+  background-color: rgb(230, 47, 221);
+}
+
 .card-cover-md {
   width: 100px;
-  height: 100px;
+  aspect-ratio: 1/1;
   border-radius: 10px;
   object-fit: cover;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -114,46 +113,32 @@
 
 .card-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
 }
 
 .card-top-row {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  margin-bottom: 8px;
 }
 
 .card-main-info h3 {
-  margin: 0 0 5px 0;
+  margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
-  cursor: pointer;
   color: var(--color-text);
-}
-
-.card-type {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-stats-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
-.card-repros {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-}
-
-/* Botón Reproducir en Tarjeta */
 .btn-play-card {
-  align-self: flex-start;
-  margin-top: 15px;
   background-color: var(--color-accent);
   color: white;
   border: none;
@@ -161,89 +146,96 @@
   border-radius: 50px;
   font-size: 0.75rem;
   font-weight: 800;
-  cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: transform 0.2s, background-color 0.2s;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
-.btn-play-card:hover {
-  background-color: var(--color-btn-hover);
-  transform: scale(1.05);
-}
+.btn-play-card:hover { transform: scale(1.05); }
 
-/* Iconos Like/Favorito */
 .icon-btn {
   background: none;
   border: none;
-  padding: 8px;
-  cursor: pointer;
   color: var(--color-text-muted);
+  cursor: pointer;
   transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
 }
 
-.icon-btn:hover {
-  transform: scale(1.2);
-  color: white;
-}
-
-.icon-btn svg[fill="var(--color-btn-active)"] {
-  filter: drop-shadow(0 0 8px var(--color-accent));
-}
+.icon-btn:hover { color: #FFF; transform: scale(1.2); }
 
 /* --- REPRODUCTOR LATERAL --- */
 .side-player-panel {
   flex: 0 0 30%;
   position: sticky;
-  top: 150px; /* Centrado vertical visual */
-  height: fit-content;
-  align-self: flex-start;
+  top: calc(var(--header-height) + 120px);
+  z-index: 100;
 }
 
 .side-player-card {
   background-color: var(--color-card);
-  padding: 30px;
+  padding: 25px;
   border-radius: 24px;
   border: 1px solid var(--border-subtle);
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .side-player-cover {
   width: 100%;
   aspect-ratio: 1/1;
   border-radius: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   object-fit: cover;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-}
-
-.side-player-title {
-  font-family: var(--font-title);
-  font-size: 1.2rem;
-  color: #FFFFFF;
-  margin: 10px 0 5px 0;
-}
-
-.side-player-subtitle {
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  margin-bottom: 25px;
 }
 
 .custom-audio-player {
   width: 100%;
-  filter: invert(100%) hue-rotate(180deg) brightness(1.5); /* Player oscuro */
+  margin-top: 15px;
+  filter: invert(100%) hue-rotate(180deg) brightness(1.2);
 }
 
-/* Responsivo */
 @media (max-width: 992px) {
-  .explore-main-content { flex-direction: column; }
-  .songs-column.with-player { flex: 1; max-width: 100%; }
-  .side-player-panel { position: fixed; bottom: 0; left: 0; width: 100%; top: auto; z-index: 1000; padding: 10px; }
-  .side-player-card { border-radius: 16px 16px 0 0; display: flex; align-items: center; gap: 15px; padding: 15px; }
-  .side-player-cover { width: 50px; height: 50px; margin: 0; }
+  .explore-main-content { 
+    flex-direction: column; 
+    padding-bottom: 120px;
+  }
+  
+  .songs-column, 
+  .songs-column.with-player { 
+    flex: 1 1 100% !important; 
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  .explore-main-content {
+    padding: 20px 15px;
+    flex-direction: column;
+  }
+  
+  .songs-column.with-player { flex: 1; width: 100%; }
+
+  .side-player-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    top: auto;
+    padding: 0;
+    background: #1A1D23;
+  }
+
+  .side-player-card {
+    border-radius: 16px 16px 0 0;
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    align-items: center;
+    padding: 12px 20px;
+    gap: 15px;
+    text-align: left;
+  }
+
+  .side-player-cover { margin: 0; width: 60px; height: 60px; }
   .side-player-subtitle { display: none; }
+  .side-player-title { font-size: 1rem; margin: 0; }
+  .custom-audio-player { margin-top: 0; }
 }

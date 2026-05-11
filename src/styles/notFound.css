@@ -1,14 +1,12 @@
 /* src/styles/NotFound.css */
 
 .notfound-container {
-  height: 80vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 20px;
-  /* El fondo ya es el gradiente global, pero podemos oscurecerlo un poco aquí */
   background: rgba(0, 0, 0, 0.2); 
 }
 
@@ -16,13 +14,12 @@
   font-family: var(--font-title);
   font-size: 1.5rem;
   letter-spacing: 8px;
-  color: var(--color-accent); /* Tu azul eléctrico */
+  color: var(--color-accent);
   margin-bottom: 20px;
   text-transform: uppercase;
   font-weight: 800;
 }
 
-/* EFECTO GLITCH / VIBRACIÓN */
 .glitch-wrapper {
   position: relative;
   animation: shake 0.5s infinite alternate;
@@ -35,7 +32,6 @@
   color: #FFFFFF;
   display: block;
   margin: 20px 0;
-  /* Sombras de colores (Cyan y Magenta) para efecto digital */
   text-shadow: 
     4px 4px 0px #ff0055, 
     -4px -4px 0px #00fbff;
@@ -48,9 +44,9 @@
   line-height: 1.6;
   margin-bottom: 40px;
   text-align: center;
+  padding: 0 20px;
 }
 
-/* BOTÓN BLANCO PREMIUM */
 .btn-notfound {
   padding: 18px 40px;
   background-color: #FFFFFF;
@@ -69,7 +65,6 @@
   box-shadow: 0 10px 20px rgba(47, 50, 230, 0.4);
 }
 
-/* ANIMACIÓN SHAKE */
 @keyframes shake {
   0% { transform: translate(0); }
   25% { transform: translate(-2px, 2px); }

@@ -6,49 +6,71 @@ import { exploreTranslations } from '../lang/exploreTranslations';
 import { trackEvent } from '../utils/analytics';
 import { useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-
 import '../styles/explore.css';
+
+/**
+ * Componente Explore: Motor de descubrimiento musical del aplicativo.
+ * 
+ * Gestiona el catálogo de canciones permitiendo filtrado dinámico,
+ * interacciones de usuario (Likes/Favoritos) con validación de sesión
+ * y un sistema de reproducción con seguimiento de métricas (telemetría).
+ */
 
 const Explore = () => {
   const { user, lang } = useAuth();
+  
+  // Estados para la gestión de datos y UI
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentSong, setCurrentSong] = useState(null);
-  const [sort, setSort] = useState('oldest');
+  const [currentSong, setCurrentSong] = useState(null); // Canción en reproducción
+  const [sort, setSort] = useState('oldest'); // Criterio de ordenación actual
+  
+  // Referencia para acceso directo al nodo de audio y sus propiedades nativas
   const audioRef = useRef(null);
+  
+  // Estados para el cálculo de telemetría de escucha real
   const [lastTrackedTime, setLastTrackedTime] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
+  
   const navigate = useNavigate();
   const t = exploreTranslations[lang];
 
-  // URL base para las imágenes (definida en tu .env de React)
-  // const storageUrl = import.meta.env.VITE_STORAGE_URL;
-
+  /**
+   * Manejador de inicio de reproducción.
+   * Si es el primer "play" de la pista seleccionada, registra el evento 
+   * de nueva reproducción en el servidor mediante 'trackEvent'.
+   */
   const handlePlay = () => {
-    // Si es la primera vez que suena esta canción desde que se seleccionó
     if (!hasStarted) {
-        // Enviamos un valor especial o un evento diferente para contar la reproducción
         trackEvent('playtime', currentSong.id, 0, { action: 'new_play' });
         setHasStarted(true);
     }
+    // Sincroniza la marca de tiempo para el cálculo de duración escuchada
     setLastTrackedTime(audioRef.current.currentTime);
   };
 
+  /**
+   * Gestión de Telemetría (Pausa/Fin):
+   * Calcula el tiempo neto de escucha comparando el tiempo actual del audio 
+   * con la última marca registrada. Solo envía datos si la escucha es >= 2 seg.
+   */
   const handlePauseOrEnd = () => {
     if (!audioRef.current) return;
 
-    // Calculamos la diferencia entre el segundo actual y cuando empezó a sonar
     const currentTime = audioRef.current.currentTime;
     const elapsed = Math.round(currentTime - lastTrackedTime);
 
-    // Solo enviamos al servidor si escuchó al menos 2 segundos (para evitar ruidos)
     if (elapsed >= 2) {
       trackEvent('playtime', currentSong.id, elapsed);
-      // Actualizamos la marca de tiempo por si vuelve a darle al play sin cambiar de canción
-      setLastTrackedTime(currentTime);
+      setLastTrackedTime(currentTime); // Actualiza la marca para tramos de escucha continuos
     }
   };
 
+  /**
+   * Manejador de Interacciones (Like/Favorito):
+   * Incluye una barrera de seguridad: si el usuario no está autenticado,
+   * se despliega una alerta (SweetAlert2) y se redirige al login.
+   */
   const handleInteraction = async (songId, type) => {
     if (!user) {
       Swal.fire({
@@ -58,28 +80,25 @@ const Explore = () => {
         showCancelButton: true,
         confirmButtonText: t.alertConfirm,
         cancelButtonText: t.alertCancel,
-        background: 'var(--color-card)', // Usamos tu color de Figma
+        background: 'var(--color-card)',
         color: '#fff',
-        confirmButtonColor: 'var(--color-accent)', // Tu azul eléctrico
+        confirmButtonColor: 'var(--color-accent)',
         cancelButtonColor: '#333',
       }).then((result) => {
-        if (result.isConfirmed) {
-          navigate('/login'); // Redirigimos al usuario al login
-        }
+        if (result.isConfirmed) navigate('/login');
       });
       return;
     }
 
     try {
-      // type será 'like' o 'favorite' según el botón pulsado
+      // Petición asíncrona a la API según el tipo de interacción
       const res = await api.post(`/songs/${songId}/${type}`);
       
-      // Actualizamos el estado local de la lista de canciones
+      // Actualización "optimista" del estado local para respuesta inmediata de la UI
       setSongs(songs.map(song => {
         if (song.id === songId) {
           return { 
             ...song, 
-            // Si el backend devuelve 'is_liked' o 'is_favorite', lo actualizamos
             is_liked: type === 'like' ? res.data.is_liked : song.is_liked,
             is_favorite: type === 'favorite' ? res.data.is_favorite : song.is_favorite
           };
@@ -91,23 +110,23 @@ const Explore = () => {
     }
   };
 
+  /**
+   * Reproducción Secuencial (Auto-play):
+   * Calcula el índice de la canción actual y selecciona la siguiente 
+   * de forma circular dentro de la lista de canciones cargada.
+   */
   const playNextSong = () => {
     if (!currentSong) return;
-
-    // 1. Buscamos el índice de la canción que está sonando ahora
     const currentIndex = songs.findIndex(s => s.id === currentSong.id);
-
-    // 2. Calculamos el siguiente índice
-    // Si es la última canción, volverá a la primera (bucle)
     const nextIndex = (currentIndex + 1) % songs.length;
-
-    // 3. Cambiamos la canción actual
     setCurrentSong(songs[nextIndex]);
-    
-    // Opcional: Registrar evento de reproducción para la nueva canción
-    // trackEvent('playtime', songs[nextIndex].id, 1);
   };
 
+  /**
+   * Efecto de carga: 
+   * Se dispara cada vez que el criterio de ordenación (sort) cambia, 
+   * realizando una petición GET con query params a la API de Laravel.
+   */
   useEffect(() => {
     const fetchSongs = async () => {
       try {
@@ -122,17 +141,16 @@ const Explore = () => {
     fetchSongs();
   }, [sort]);
 
+  // Reinicia la bandera de inicio de trackeo al cambiar de canción
   useEffect(() => {
     setHasStarted(false);
   }, [currentSong]);
 
-  if (loading) return <div style={{ padding: '20px' }}>{lang === 'es' ? 'Cargando biblioteca...' : 'Loading songs...'}</div>;
+  if (loading) return <div style={{ padding: '20px' }}>{t.loading}</div>;
 
   return (
-    /* 1. Cambiamos el contenedor principal para que permita elementos a ancho completo */
     <div className="explore-page-wrapper">
-      
-      {/* 2. SACAMOS EL HEADER DE LAS COLUMNAS: Ahora ocupará el 100% del ancho siempre */}
+      {/* Header Sticky: Contiene los filtros dinámicos */}
       <header className="sticky-header">
         <div className="header-inner-content">
           <h2 className="explore-title">{t.title}</h2>
@@ -150,24 +168,24 @@ const Explore = () => {
         </div>
       </header>
 
-      {/* 3. CONTENEDOR DE COLUMNAS: Solo para la lista y el reproductor */}
+      {/* Main Layout: Lista de canciones y Reproductor Lateral (Side Player) */}
       <div className="explore-main-content">
         <div className={`songs-column ${currentSong ? 'with-player' : ''}`}>
           <div className="songs-horizontal-list">
             {songs.map(song => (
               <div key={song.id} className={`horizontal-card ${currentSong?.id === song.id ? 'playing' : ''}`}>
                 <img src={song.cover_path} className="card-cover-md" alt="" />
-                
                 <div className="card-content">
                   <div className="card-top-row">
                     <div className="card-main-info">
+                      {/* Tracking de clic en catálogo para analítica de interés */}
                       <h3 onClick={() => trackEvent('catalog_click', song.id, 1)}>{song.name}</h3>
                       <span className="card-type">{song.collection_name || 'Single'} • {new Date(song.release_date).getFullYear()}</span>
                     </div>
-                    
                     <div className="card-stats-actions">
                       <span className="card-repros">{song.reproductions} 🎧</span>
                       <div className="card-icons">
+                        {/* Botones de interacción con lógica de color dinámica basada en estado */}
                         <button onClick={() => handleInteraction(song.id, 'like')} className="icon-btn">
                           <ThumbsUp size={18} fill={song.is_liked ? "var(--color-btn-active)" : "none"} color={song.is_liked ? "var(--color-btn-active)" : "#b3b3b3"} />
                         </button>
@@ -177,7 +195,6 @@ const Explore = () => {
                       </div>
                     </div>
                   </div>
-
                   <button className="btn-play-card" onClick={() => setCurrentSong(song)}>
                     ▶ {t.replay}
                   </button>
@@ -187,7 +204,7 @@ const Explore = () => {
           </div>
         </div>
 
-        {/* COLUMNA DERECHA: REPRODUCTOR */}
+        {/* Aside: Reproductor persistente por componente */}
         {currentSong && (
           <aside className="side-player-panel">
             <div className="side-player-card">

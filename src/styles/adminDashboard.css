@@ -1,4 +1,4 @@
-/* src/styles/Admin.css - PARTE 1: Layout y Estadísticas */
+/* src/styles/Admin.css */
 
 .admin-container {
   max-width: 1200px;
@@ -15,12 +15,10 @@
   gap: 30px;
 }
 
-/* El título hereda de .page-title en theme.css */
 .admin-header .page-title {
   margin-bottom: 0;
 }
 
-/* --- BOTONES DE PESTAÑA --- */
 .admin-tabs {
   display: flex;
   gap: 12px;
@@ -53,12 +51,11 @@
 }
 
 .tab-btn.active {
-  background: var(--color-text); /* Blanco sólido para resaltar */
+  background: var(--color-text);
   color: var(--bg-black);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* --- CUADRÍCULA DE ESTADÍSTICAS --- */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -93,7 +90,6 @@
   justify-content: center;
 }
 
-/* Colores de iconos basados en el sistema */
 .stat-icon.blue { background: rgba(47, 50, 230, 0.15); color: var(--color-accent); }
 .stat-icon.green { background: rgba(29, 185, 84, 0.15); color: var(--color-success); }
 .stat-icon.purple { background: rgba(163, 51, 255, 0.15); color: #a333ff; }
@@ -115,7 +111,6 @@
   font-weight: 800;
 }
 
-/* --- ACTIVIDAD DETALLADA (EVENTOS) --- */
 .admin-section-title { 
   color: var(--color-text); 
   margin-bottom: 25px; 
@@ -147,7 +142,6 @@
   font-family: var(--font-title);
 }
 
-/* --- TOP 5 SONGS --- */
 .top-songs-card {
   background: var(--color-card);
   border: 1px solid var(--border-subtle);
@@ -199,8 +193,6 @@
   font-size: 0.9rem;
 }
 
-
-/* --- BARRA DE ACCIONES (Buscador y Botón Añadir) --- */
 .admin-actions-bar {
   display: flex;
   justify-content: space-between;
@@ -215,7 +207,7 @@
 }
 
 .admin-search-input {
-  width: 100%; /* Ocupa el espacio disponible del flex */
+  width: 100%;
   max-width: 600px;
   padding: 14px 15px 14px 45px;
   background: var(--color-card);
@@ -262,7 +254,6 @@
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
 }
 
-/* --- TABLAS (GENERAL) --- */
 .admin-table-wrapper {
   background: var(--color-card);
   border-radius: 20px;
@@ -311,7 +302,6 @@
   color: var(--color-text);
 }
 
-/* --- BADGES Y ESTADOS --- */
 .badge-status {
   padding: 6px 12px;
   border-radius: 6px;
@@ -330,7 +320,6 @@
   font-weight: 600;
 }
 
-/* --- BOTONES DE ACCIÓN EN TABLA --- */
 .admin-actions-btns {
   display: flex;
   gap: 8px;
@@ -355,7 +344,6 @@
 .btn-action.edit:hover { color: var(--color-accent); border-color: var(--color-accent); }
 .btn-action.delete:hover { color: var(--color-danger); border-color: var(--color-danger); }
 
-/* --- FORMULARIOS (AÑADIR Y EDITAR) --- */
 .admin-add-song-form {
   background: var(--color-card);
   padding: 35px;
@@ -376,7 +364,6 @@
   border: 1px dashed var(--color-accent);
 }
 
-/* Forzamos que en el Drawer (lateral) la colección sea en una columna */
 .collection-fields-container.drawer-variant {
   display: flex;
   flex-direction: column;
@@ -394,26 +381,23 @@
   box-shadow: 0 0 30px rgba(47, 50, 230, 0.1);
 }
 
-/* Cuadrícula de 2 columnas */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 25px;
 }
 
-/* --- SECCIÓN DE COLECCIÓN (EP/ALBUM) --- */
 .collection-fields-container {
-  grid-column: 1 / -1; /* Ocupa las dos columnas */
+  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  background: rgba(47, 50, 230, 0.05); /* Tinte azul muy sutil */
+  background: rgba(47, 50, 230, 0.05);
   padding: 25px;
   border-radius: 16px;
   border: 1px dashed var(--color-accent);
 }
 
-/* --- INPUTS Y LABELS --- */
 .admin-input-group {
   display: flex;
   flex-direction: column;
@@ -423,7 +407,7 @@
 .admin-input-group label {
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--color-text); /* Blanco sólido */
+  color: var(--color-text);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -451,7 +435,6 @@
   border-style: dotted;
 }
 
-/* Placeholder y Opciones del Select */
 .admin-input::placeholder {
   color: rgba(255, 255, 255, 0.3);
 }
@@ -461,7 +444,6 @@
   color: white;
 }
 
-/* Personalización de Inputs Archivo */
 .file-input-wrapper {
   background: rgba(255, 255, 255, 0.03);
   padding: 12px;
@@ -495,7 +477,7 @@
 
 .admin-submit-btn {
   width: 100%;
-  background: #FFFFFF; /* Botón blanco destacado */
+  background: #FFFFFF;
   color: var(--bg-black);
   border: none;
   padding: 16px;
@@ -520,8 +502,6 @@
   font-weight: 600;
 }
 
-/* --- DRAWER: CONTENEDORES PRINCIPALES --- */
-
 .admin-drawer-overlay {
   position: fixed;
   top: 0;
@@ -530,7 +510,7 @@
   height: 100vh;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(4px);
-  z-index: 3000; /* Por encima del Navbar (2000) */
+  z-index: 3000;
 }
 
 .admin-drawer {
@@ -554,7 +534,6 @@
   to { transform: translateX(0); }
 }
 
-/* --- CABECERA DEL PANEL --- */
 .admin-drawer-header {
   padding: 25px;
   display: flex;
@@ -583,7 +562,6 @@
   color: white;
 }
 
-/* --- CUERPO DEL FORMULARIO Y SCROLL --- */
 .admin-drawer-form {
   flex: 1;
   display: flex;
@@ -600,9 +578,6 @@
   gap: 20px;
 }
 
-/* --- VARIANTES PARA EL PANEL ESTRECHO --- */
-
-/* Ajustamos la colección para que sea una sola columna en el panel lateral */
 .collection-fields-container.drawer-variant {
   display: flex;
   flex-direction: column;
@@ -636,7 +611,6 @@
   font-weight: 600;
 }
 
-/* --- ACCIONES FIJAS ABAJO --- */
 .admin-drawer-actions {
   padding: 25px;
   background: rgba(0, 0, 0, 0.2);
@@ -663,13 +637,11 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Reutilizamos el botón de submit azul del tema para el Drawer */
 .admin-drawer .admin-submit-btn {
     background: var(--color-accent);
     color: white;
 }
 
-/* --- USUARIOS ESPECÍFICO --- */
 .admin-status-select {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);

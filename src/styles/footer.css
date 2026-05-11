@@ -1,7 +1,7 @@
 /* src/styles/Footer.css */
 
 .main-footer {
-  background-color: #181A20;; /* Fondo oscuro sólido */
+  background-color: #181A20;
   border-top: 1px solid var(--border-subtle);
   padding: 80px 20px 40px 20px;
   margin-top: auto;
@@ -14,7 +14,7 @@
 
 .footer-columns {
   display: flex;
-  justify-content: space-around; /* Separa las dos columnas */
+  justify-content: space-around;
   gap: 40px;
   margin-bottom: 60px;
 }
@@ -31,7 +31,7 @@
   font-size: 0.9rem;
   letter-spacing: 2px;
   margin: 0;
-  border-bottom: 2px solid var(--color-accent); /* Línea azul bajo el título de la columna */
+  border-bottom: 2px solid var(--color-accent);
   padding-bottom: 8px;
   width: fit-content;
 }
@@ -51,7 +51,7 @@
 
 .footer-links-list a:hover {
   color: var(--color-accent);
-  transform: translateX(5px); /* Pequeño desplazamiento al pasar el ratón */
+  transform: translateX(5px);
 }
 
 .footer-bottom {
@@ -66,7 +66,6 @@
   margin: 0;
 }
 
-/* Responsivo para móviles */
 @media (max-width: 600px) {
   .footer-columns {
     flex-direction: column;

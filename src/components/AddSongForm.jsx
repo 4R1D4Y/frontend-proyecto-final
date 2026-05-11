@@ -4,18 +4,26 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { addSongFormTranslations } from '../lang/addSongFormTranslations';
 
+/**
+ * Componente AddSongForm
+ * 
+ * Gestiona la creación de nuevos registros musicales en la base de datos.
+ * Maneja de forma asíncrona tanto metadatos (texto) como archivos binarios (Blob).
+ */
+
 const AddSongForm = ({ allSongs, onSongAdded }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // Internacionalización: Obtención de etiquetas según el idioma del contexto
     const { lang } = useAuth();
     const t = addSongFormTranslations[lang];
 
-    // Estados para los archivos
+    // Estados independientes para archivos multimedia
     const [audioFile, setAudioFile] = useState(null);
     const [coverFile, setCoverFile] = useState(null);
 
-    // Estados para los textos
+    // Estado unificado para el formulario
     const [formData, setFormData] = useState({
         name: '',
         type: 'single',
@@ -25,6 +33,11 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
         collection_order: 1
     });
 
+    /**
+     * Lógica de autogestión de colecciones.
+     * Al escribir el nombre de un álbum/EP, filtra las canciones existentes 
+     * para calcular automáticamente el siguiente número de orden.
+     */
     const handleCollectionNameChange = (name) => {
         let nextOrder = 1;
         if (name.trim() !== '') {
@@ -39,12 +52,16 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
         setFormData({ ...formData, collection_name: name, collection_order: nextOrder });
     };
 
+    /**
+     * Envío de datos mediante objeto FormData.
+     * Esencial para permitir la subida de archivos binarios (multipart/form-data)
+     * hacia el servidor Laravel.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
-        // IMPORTANTE: Para enviar archivos usamos FormData
         const data = new FormData();
         data.append('name', formData.name);
         data.append('type', formData.type);
@@ -53,7 +70,7 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
         data.append('collection_name', formData.collection_name || '');
         data.append('collection_order', formData.collection_order || '');
         
-        // Estos nombres deben coincidir con los de tu AdminController ($request->file('...'))
+        // Adjuntamos archivos físicos
         data.append('audio_path', audioFile);
         data.append('cover_path', coverFile);
 
@@ -61,15 +78,16 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
             await api.post('/admin/songs', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
+            // Feedback visual mediante SweetAlert2
             Swal.fire({
               title: t.uploaded_t,
               text: t.uploaded_d,
               icon: 'success',
-              confirmButtonColor: '#1db954', // El verde de tu app
+              confirmButtonColor: '#1db954',
               background: '#181818',
               color: '#fff'
             });
-            onSongAdded(); // Refresca la lista y cierra el form
+            onSongAdded(); // Refresco de la lista en el componente padre
         } catch (err) {
             setError(err.response?.data?.message || t.uploadingError);
         } finally {
@@ -77,23 +95,30 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
         }
     };
 
+    /**
+     * Cálculo de metadatos en tiempo real.
+     * Crea un objeto de audio temporal para extraer la duración (en segundos)
+     * del archivo seleccionado por el usuario antes de la subida.
+     */
     const calculateDuration = (file) => {
       return new Promise((resolve) => {
         const audio = new Audio();
         audio.src = URL.createObjectURL(file);
         audio.onloadedmetadata = () => {
-          // Obtenemos la duración en segundos (redondeando)
           resolve(Math.round(audio.duration));
         };
       });
     };
 
+    /**
+     * Handler para el archivo de audio.
+     * Automatiza la extracción de duración para evitar que el usuario deba 
+     * introducirla manualmente, reduciendo el error humano.
+     */
     const handleAudioChange = async (e) => {
       const file = e.target.files[0];
       if (file) {
         setAudioFile(file);
-        
-        // Calculamos la duración automáticamente
         const seconds = await calculateDuration(file);
         setFormData(prev => ({ ...prev, duration: seconds }));
       }
@@ -102,7 +127,7 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
     return (
         <form onSubmit={handleSubmit} className="admin-add-song-form">
             <div className="form-grid">
-                {/* GRUPO: NOMBRE */}
+                {/* Grupos de inputs con labels traducidos dinámicamente */}
                 <div className="admin-input-group">
                     <label>{t.inputName_t}</label>
                     <input 
@@ -114,7 +139,7 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
                     />
                 </div>
 
-                {/* GRUPO: TIPO */}
+                {/* Select de tipo de lanzamiento */}
                 <div className="admin-input-group">
                     <label>{t.inputType_t}</label>
                     <select 
@@ -127,7 +152,7 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
                     </select>
                 </div>
 
-                {/* SECCIÓN DINÁMICA DE COLECCIÓN */}
+                {/* Renderizado condicional para campos de álbum/EP */}
                 {formData.type !== 'single' && (
                     <div className="collection-fields-container">
                         <div className="admin-input-group">
@@ -152,7 +177,6 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
                     </div>
                 )}
 
-                {/* GRUPO: FECHA */}
                 <div className="admin-input-group">
                     <label>{t.inputDate_t}</label>
                     <input 
@@ -163,7 +187,7 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
                     />
                 </div>
 
-                {/* GRUPO: DURACIÓN (Solo lectura) */}
+                {/* Input de duración en modo solo lectura (calculado automáticamente) */}
                 <div className="admin-input-group">
                     <label>{t.inputDuration_t}</label>
                     <input 
@@ -174,7 +198,7 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
                     />
                 </div>
 
-                {/* GRUPO: ARCHIVOS */}
+                {/* Secciones de carga de archivos binarios */}
                 <div className="admin-input-group">
                     <label>{t.inputAudio_t}</label>
                     <div className="file-input-wrapper">
@@ -199,7 +223,6 @@ const AddSongForm = ({ allSongs, onSongAdded }) => {
                     </div>
                 </div>
 
-                {/* BOTÓN Y ERRORES */}
                 <div className="form-actions-full">
                     <button type="submit" disabled={loading} className="admin-submit-btn">
                         {loading ? t.uploading : t.uploadingSave}

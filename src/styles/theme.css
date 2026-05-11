@@ -2,6 +2,7 @@
 
 :root {
   /* --- PALETA DE COLORES FIGMA --- */
+  /* Fondos */
   --bg-blue: #2F32E6;
   --bg-black: #000000;
   --bg-gradient: linear-gradient(180deg, var(--bg-blue) 0%, var(--bg-black) 100%);
@@ -35,7 +36,6 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  /* El gradiente se queda fijo para que el contenido "deslice" sobre él */
   background: var(--bg-gradient) no-repeat fixed;
   color: var(--color-text);
   font-family: var(--font-body);
@@ -62,7 +62,6 @@ h1, h2, h3, h4 {
 
 /* --- COMPONENTES GENÉRICOS --- */
 
-/* Badge para tipos de canciones o roles */
 .badge-type {
   background: rgba(255, 255, 255, 0.1);
   padding: 4px 10px;
@@ -73,7 +72,6 @@ h1, h2, h3, h4 {
   color: var(--color-text);
 }
 
-/* Inputs Oscuros Estilizados */
 .admin-input, .auth-input, .dash-input {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);
@@ -88,7 +86,6 @@ h1, h2, h3, h4 {
   border-color: var(--color-accent);
 }
 
-/* Botones Principales */
 .btn-primary-white {
   background-color: #FFFFFF;
   color: #000000;
@@ -100,6 +97,33 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   font-family: var(--font-body);
   transition: transform 0.2s ease;
+}
+
+.bannerCookies {
+  position: 'fixed';
+  bottom: '100px';
+  left: '20px';
+  right: '20px';
+  background: '#282828';
+  color: 'white';
+  padding: '15px 25px';
+  border-radius: '8px';
+  display: 'flex';
+  justify-content: 'space-between';
+  align-items: 'center';
+  box-shadow: '0 -4px 20px rgba(0,0,0,0.5)';
+  z-index: 2000;
+}
+
+.btnCookies {
+  background: '#1db954';
+  color: 'white';
+  border: 'none';
+  padding: '8px 20px';
+  border-radius: '20px';
+  cursor: 'pointer';
+  font-weight: 'bold';
+  margin-left: '20px';
 }
 
 .btn-primary-white:hover {

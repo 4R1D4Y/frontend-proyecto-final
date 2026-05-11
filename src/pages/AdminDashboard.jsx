@@ -6,15 +6,25 @@ import { Trash2, Clock, Edit, Plus, Users, Music, Eye, EyeOff, Activity, MousePo
 import AddSongForm from '../components/AddSongForm';
 import EditSongForm from '../components/EditSongForm';
 import { adminDashboardTranslations } from '../lang/adminDashboardTranslations';
-
 import "../styles/adminDashboard.css";
 
+/**
+ * Componente AdminDashboard
+ * 
+ * Núcleo administrativo de la plataforma. Gestiona tres áreas críticas:
+ * 1. Estadísticas y Telemetría: Visualización de eventos en tiempo real.
+ * 2. Gestión de Catálogo: CRUD completo de canciones y colecciones.
+ * 3. Gestión de Usuarios: Control de acceso, suspensiones y bloqueos.
+ */
+
 const AdminDashboard = () => {
+  // Estados para el almacenamiento de datos procedentes de la API
   const [songs, setSongs] = useState([]);
   const [users, setUsers] = useState([]);
-  const [view, setView] = useState('stats');
+  const [view, setView] = useState('stats'); // Control de la vista activa (tabs)
   const [loading, setLoading] = useState(true);
 
+  // Estados para modales, edición y filtrado
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSong, setEditingSong] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,6 +32,7 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [events, setEvents] = useState([]);
 
+  // Lógica de paginación del lado del cliente para optimizar el rendimiento de la UI
   const [currentPageSongs, setCurrentPageSongs] = useState(1);
   const [currentPageUsers, setCurrentPageUsers] = useState(1);
   const itemsPerPage = 10;
@@ -29,10 +40,16 @@ const AdminDashboard = () => {
   const { lang } = useAuth();
   const t = adminDashboardTranslations[lang];
 
+  // Efecto para refrescar los datos automáticamente al cambiar de pestaña
   useEffect(() => {
     fetchData();
   }, [view]);
 
+  /**
+   * Identificación visual de telemetría:
+   * Asigna iconos y estilos dinámicos a los eventos de usuario (reproducciones, clics, etc.)
+   * para facilitar la lectura rápida de la actividad en la plataforma.
+   */
   const getEventIcon = (type) => {
     switch (type) {
       case 'playtime': return <Music size={20} />;
@@ -62,7 +79,12 @@ const AdminDashboard = () => {
     };
   };
 
-  // Para Canciones
+  /**
+   * Lógica de Filtrado y Paginación:
+   * Se aplican filtros de búsqueda en tiempo real sobre los arrays de datos
+   * y se calculan los índices para la segmentación de páginas.
+   */
+   // Para Canciones
   const filteredSongs = songs.filter(song => 
     song.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -78,114 +100,12 @@ const AdminDashboard = () => {
   const firstIndexUsers = lastIndexUsers - itemsPerPage;
   const currentUsers = filteredUsers.slice(firstIndexUsers, lastIndexUsers);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const resStats = await api.get('/admin/stats');
-      setStats(resStats.data);
-
-      if (view === 'songs') {
-        const res = await api.get('/admin/songs/all');
-        setSongs(res.data);
-      } else if (view === 'users') {
-        const res = await api.get('/admin/users');
-        setUsers(res.data);
-      } else if (view === 'stats') {
-        const res = await api.get('/admin/events');
-        setEvents(res.data);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    const result = await Swal.fire({
-        title: t.confirmDelete_t,
-        text: t.confirmDelete_d,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#333',
-        confirmButtonText: t.confirmDeleteButtonConfirm,
-        cancelButtonText: t.confirmDeleteButtonCancel,
-        background: '#181818',
-        color: '#fff'
-    });
-
-    if (result.isConfirmed) {
-        try {
-        await api.delete(`/admin/songs/${id}`);
-        setSongs(songs.filter(s => s.id !== id));
-        Swal.fire(t.confirmedDelete_t, t.confirmedDelete_d, 'success');
-        } catch (error) {
-        Swal.fire(t.confirmDelete__error_t, t.confirmDelete_error_d, 'error');
-        }
-    }
-  };
-
-  const toggleStatus = async (id, currentStatus) => {
-    const newStatus = currentStatus === 'active' ? 'hidden' : 'active';
-    try {
-      await api.patch(`/admin/songs/${id}/status`, { status: newStatus });
-      setSongs(songs.map(s => s.id === id ? { ...s, status: newStatus } : s));
-    } catch (err) {
-      alert(t.errorChangeStatus);
-    }
-  };
-
-  const handleUserStatus = async (user, newStatus) => {
-    let suspensionTime = null;
-
-    // Si es suspensión, pedimos la fecha antes de enviar
-    if (newStatus === 'suspended') {
-      const { value: date } = await Swal.fire({
-        title: t.suspendDate_t,
-        html: '<input type="datetime-local" id="swal-input1" class="swal2-input">',
-        focusConfirm: false,
-        background: '#181818',
-        color: '#fff',
-        confirmButtonColor: '#1db954',
-        preConfirm: () => {
-          return document.getElementById('swal-input1').value;
-        }
-      });
-
-      if (!date) return; // Cancelado si no hay fecha
-      suspensionTime = date;
-    }
-
-    // Confirmación final
-    const result = await Swal.fire({
-      title: `${t.confirmStatusUser_t} ${newStatus}`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#1db954',
-      background: '#181818',
-      color: '#fff'
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await api.patch(`/admin/users/${user.id}/status`, { 
-          status: newStatus,
-          suspension_time: suspensionTime // Enviamos la fecha al backend
-        });
-        
-        // Actualizamos la lista localmente
-        setUsers(users.map(u => u.id === user.id ? { ...u, status: newStatus, suspension_time: suspensionTime } : u));
-        Swal.fire(t.confirmedStatusUser_t, t.confirmedStatusUser_d, 'success');
-      } catch (err) {
-        Swal.fire('Error', err.response?.data?.message || t.errorChangeStatusUser, 'error');
-      }
-    }
-  };
-
-  
-
-  const Pagination = ({ current, total, paginate }) => {
+  /**
+   * Subcomponente de Paginación:
+   * Abstracción funcional para la navegación entre bloques de datos,
+   * facilitando la reutilización tanto en la lista de canciones como en la de usuarios.
+   */
+   const Pagination = ({ current, total, paginate }) => {
     const totalPages = Math.ceil(total / itemsPerPage);
     if (totalPages <= 1) return null;
 
@@ -210,9 +130,132 @@ const AdminDashboard = () => {
         </button>
       </div>
     );
+   };
+
+  /**
+   * Sincronización con el Backend:
+   * Realiza peticiones asíncronas agrupadas para obtener métricas generales
+   * y datos específicos según la vista seleccionada por el administrador.
+   */
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const resStats = await api.get('/admin/stats');
+      setStats(resStats.data);
+
+      if (view === 'songs') {
+        const res = await api.get('/admin/songs/all');
+        setSongs(res.data);
+      } else if (view === 'users') {
+        const res = await api.get('/admin/users');
+        setUsers(res.data);
+      } else if (view === 'stats') {
+        const res = await api.get('/admin/events');
+        setEvents(res.data);
+      }
+    } catch (err) {
+      console.error("Error en la carga de administración:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Operaciones CRUD: Eliminación de recursos.
+   * Implementa confirmación mediante SweetAlert2 antes de disparar la petición DELETE
+   * a la API de Laravel para evitar pérdidas accidentales de datos.
+   */
+  const handleDelete = async (id) => {
+     const result = await Swal.fire({
+        title: t.confirmDelete_t,
+        text: t.confirmDelete_d,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#333',
+        confirmButtonText: t.confirmDeleteButtonConfirm,
+        cancelButtonText: t.confirmDeleteButtonCancel,
+        background: '#181818',
+        color: '#fff'
+    });
+
+    if (result.isConfirmed) {
+        try {
+        await api.delete(`/admin/songs/${id}`);
+        setSongs(songs.filter(s => s.id !== id)); // Actualización optimista de la UI
+        Swal.fire(t.confirmedDelete_t, t.confirmedDelete_d, 'success');
+        } catch (error) {
+        Swal.fire(t.confirmDelete__error_t, t.confirmDelete_error_d, 'error');
+        }
+    }
+  };
+
+  /**
+   * Gestión de Visibilidad del Catálogo:
+   * Permite alternar entre estados 'active' y 'hidden' mediante el método PATCH,
+   * permitiendo al admin retirar canciones del catálogo público sin eliminarlas.
+   */
+  const toggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'active' ? 'hidden' : 'active';
+    try {
+      await api.patch(`/admin/songs/${id}/status`, { status: newStatus });
+      setSongs(songs.map(s => s.id === id ? { ...s, status: newStatus } : s));
+    } catch (err) {
+      alert(t.errorChangeStatus);
+    }
+  };
+
+  /**
+   * Control de Seguridad de Usuarios:
+   * Implementa una lógica avanzada de moderación. En caso de 'suspensión',
+   * se solicita una fecha y hora de desbloqueo mediante un modal con input nativo.
+   */
+  const handleUserStatus = async (user, newStatus) => {
+    let suspensionTime = null;
+
+    if (newStatus === 'suspended') {
+      const { value: date } = await Swal.fire({
+        title: t.suspendDate_t,
+        html: '<input type="datetime-local" id="swal-input1" class="swal2-input">',
+        focusConfirm: false,
+        background: '#181818',
+        color: '#fff',
+        confirmButtonColor: '#1db954',
+        preConfirm: () => {
+          return document.getElementById('swal-input1').value;
+        }
+      });
+      if (!date) return;
+      suspensionTime = date;
+    }
+
+    const result = await Swal.fire({
+      title: `${t.confirmStatusUser_t} ${newStatus}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#1db954',
+      background: '#181818',
+      color: '#fff'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.patch(`/admin/users/${user.id}/status`, { 
+          status: newStatus,
+          suspension_time: suspensionTime 
+        });
+        
+        // Sincronización del estado local con el backend
+        setUsers(users.map(u => u.id === user.id ? { ...u, status: newStatus, suspension_time: suspensionTime } : u));
+        Swal.fire(t.confirmedStatusUser_t, t.confirmedStatusUser_d, 'success');
+      } catch (err) {
+        Swal.fire('Error', err.response?.data?.message || t.errorChangeStatusUser, 'error');
+      }
+    }
   };
 
   if (loading) return <p style={{ padding: '20px' }}>{t.loading}</p>;
+
 
   return (
     <div className="admin-container">

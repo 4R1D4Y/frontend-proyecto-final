@@ -4,15 +4,25 @@ import Swal from 'sweetalert2';
 import { useAuth } from '../context/AuthContext';
 import { editSongFormTranslations } from '../lang/editSongFormTranslations';
 
+/**
+ * Componente EditSongForm
+ * 
+ * Interfaz de administración tipo "Drawer" para la edición de registros musicales.
+ * Permite la actualización asíncrona de metadatos y archivos multimedia.
+ */
+
 const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
+    // Estados para controlar el flujo de carga y la selección de nuevos archivos
     const [loading, setLoading] = useState(false);
     const [audioFile, setAudioFile] = useState(null);
     const [coverFile, setCoverFile] = useState(null);
     const [duration, setDuration] = useState(song.duration);
 
+    // Internacionalización: Obtención de etiquetas según el idioma del contexto
     const { lang } = useAuth();
     const t = editSongFormTranslations[lang];
 
+    // Estado unificado inicializado con los valores actuales del registro (song)
     const [formData, setFormData] = useState({
         name: song.name,
         type: song.type,
@@ -22,6 +32,11 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
         collection_order: song.collection_order || 1
     });
 
+    /**
+     * Lógica de autogestión de colecciones (Álbumes/EPs).
+     * Si se cambia el nombre de la colección, busca el orden más alto entre
+     * las otras canciones de ese grupo para sugerir la posición siguiente.
+     */
     const handleCollectionNameChange = (name) => {
         let nextOrder = 1;
         if (name.trim() !== '') {
@@ -36,6 +51,11 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
         setFormData({ ...formData, collection_name: name, collection_order: nextOrder });
     };
 
+    /**
+     * Cálculo de duración en cliente.
+     * Crea un objeto de audio temporal para leer los metadatos del archivo local
+     * y extraer la duración exacta sin necesidad de procesarlo en el servidor.
+     */
     const calculateDuration = (file) => {
         return new Promise((resolve) => {
             const audio = new Audio();
@@ -46,16 +66,25 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
         });
     };
 
+    /**
+     * Handler para el cambio de archivo de audio.
+     * Al detectar un nuevo archivo, dispara el cálculo de duración para actualizar 
+     * los metadatos antes del envío.
+     */
     const handleAudioChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
             setAudioFile(file);
-            // Calculamos la nueva duración y actualizamos el estado
             const newDuration = await calculateDuration(file);
             setDuration(newDuration);
         }
     };
 
+    /**
+     * Envío del formulario mediante FormData.
+     * Se utiliza '_method: PUT' para simular un método PUT mediante una petición POST,
+     * técnica necesaria en Laravel para procesar archivos binarios en actualizaciones.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -68,18 +97,20 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
         data.append('collection_name', formData.collection_name || '');
         data.append('collection_order', formData.collection_order || '');
         
+        // Simulación de método PUT para procesamiento de archivos en el backend
         data.append('_method', 'PUT');
 
         if (audioFile) data.append('audio_path', audioFile);
         if (coverFile) data.append('cover_path', coverFile);
 
         try {
+            // Petición asíncrona hacia el endpoint administrativo de la API
             await api.post(`/admin/songs/${song.id}`, data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             
             Swal.fire({ title: t.updated_t, icon: 'success', background: '#181818', color: '#fff' });
-            onSongUpdated();
+            onSongUpdated(); // Refresco de la lista en el componente padre
         } catch (err) {
             Swal.fire({ title: t.updatedError_t, text: t.updatedError_d, icon: 'error' });
         } finally {
@@ -89,10 +120,9 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
 
     return (
         <>
-            {/* Fondo oscuro tras el panel */}
+            {/* Overlay para cerrar el panel al hacer clic fuera */}
             <div className="admin-drawer-overlay" onClick={onCancel}></div>
             
-            {/* Panel Lateral Derecho */}
             <div className="admin-drawer">
                 <div className="admin-drawer-header">
                     <h3>{t.title}</h3>
@@ -101,6 +131,7 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
 
                 <form onSubmit={handleSubmit} className="admin-drawer-form">
                     <div className="admin-drawer-scroll-content">
+                        {/* Grupo: Nombre de la pista */}
                         <div className="admin-input-group">
                             <label>{t.inputName_t}</label>
                             <input 
@@ -112,6 +143,7 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
                             />
                         </div>
                         
+                        {/* Selector: Tipo de lanzamiento */}
                         <div className="admin-input-group">
                             <label>{t.inputType_t}</label>
                             <select 
@@ -125,6 +157,7 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
                             </select>
                         </div>
 
+                        {/* Renderizado condicional: Campos específicos para colecciones */}
                         {formData.type !== 'single' && (
                             <div className="collection-fields-container drawer-variant">
                                 <div className="admin-input-group">
@@ -160,6 +193,7 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
                             />
                         </div>
 
+                        {/* Carga de archivos: Audio y Portada */}
                         <div className="file-input-wrapper drawer-variant">
                             <label className="admin-label-small">{t.inputAudio_t}</label>
                             <input type="file" accept="audio/*" onChange={handleAudioChange} />
@@ -187,42 +221,5 @@ const EditSongForm = ({ song, allSongs, onSongUpdated, onCancel }) => {
         </>
     );
 };
-
-// --- ESTILOS DEL PANEL LATERAL ---
-const overlayStyle = {
-    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-    background: 'rgba(0,0,0,0.5)', zIndex: 1200
-};
-
-const drawerStyle = {
-    position: 'fixed', top: 0, right: 0, width: '400px', height: '100%',
-    background: '#fff', boxShadow: '-5px 0 15px rgba(0,0,0,0.2)',
-    zIndex: 1300, padding: '30px', display: 'flex', flexDirection: 'column',
-    animation: 'slideIn 0.3s ease-out'
-};
-
-const scrollContentStyle = {
-    flex: 1,           // Ocupa todo el espacio disponible
-    overflowY: 'auto', // Permite scroll interno si el contenido es largo
-    paddingRight: '10px',
-    marginBottom: '20px'
-};
-
-const actionsContainer = { 
-    marginTop: 'auto', // Se queda siempre al final
-    display: 'flex', 
-    flexDirection: 'column', 
-    gap: '10px',
-    paddingTop: '15px',
-    borderTop: '1px solid #eee' // Una línea sutil para separar los botones
-};
-
-const drawerHeader = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '10px' };
-const btnClose = { background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' };
-const inputStyle = { width: '100%', padding: '10px', marginBottom: '15px', borderRadius: '5px', border: '1px solid #ccc' };
-const fileBox = { background: '#f4f4f4', padding: '10px', borderRadius: '5px', marginBottom: '15px', fontSize: '0.8rem' };
-const btnSave = { background: '#1db954', color: 'white', padding: '12px', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' };
-const btnCancel = { background: '#eee', color: '#333', padding: '12px', border: 'none', borderRadius: '5px', cursor: 'pointer' };
-const formStyle = { display: 'flex', flexDirection: 'column', height: 'calc(100% - 140px)' };
 
 export default EditSongForm;
